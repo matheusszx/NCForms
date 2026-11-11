@@ -63,7 +63,7 @@ public class Form {
         this.updatedAt = this.createdAt;
     }
 
-    /** Campos visíveis (não arquivados), na ordem de exibição. */
+    /** Visible (non-archived) fields, in display order. */
     public List<FormField> getActiveFields() {
         return fields.stream().filter(f -> !f.isArchived()).toList();
     }

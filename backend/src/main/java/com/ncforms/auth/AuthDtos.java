@@ -13,14 +13,14 @@ public final class AuthDtos {
     }
 
     public record RegisterRequest(
-            @NotBlank(message = "Informe seu nome.") @Size(max = 120, message = "Nome muito longo.") String name,
-            @NotBlank(message = "Informe o e-mail.") @Email(message = "E-mail inválido.") @Size(max = 255) String email,
-            @NotBlank(message = "Informe a senha.") @Size(min = 8, max = 72, message = "A senha deve ter entre 8 e 72 caracteres.") String password) {
+            @NotBlank(message = "Enter your name.") @Size(max = 120, message = "Name is too long.") String name,
+            @NotBlank(message = "Enter your email.") @Email(message = "Invalid email address.") @Size(max = 255) String email,
+            @NotBlank(message = "Enter your password.") @Size(min = 8, max = 72, message = "Password must be between 8 and 72 characters.") String password) {
     }
 
     public record LoginRequest(
-            @NotBlank(message = "Informe o e-mail.") String email,
-            @NotBlank(message = "Informe a senha.") String password) {
+            @NotBlank(message = "Enter your email.") String email,
+            @NotBlank(message = "Enter your password.") String password) {
     }
 
     public record UserDto(UUID id, String name, String email) {

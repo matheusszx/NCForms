@@ -52,7 +52,7 @@ public class FormField {
     @Column(nullable = false)
     private boolean required;
 
-    /** Configurações específicas do tipo (placeholder, min, max, maxLength, rótulos da escala...). */
+    /** Type-specific settings (placeholder, min, max, maxLength, scale labels...). */
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private Map<String, Object> config = new HashMap<>();

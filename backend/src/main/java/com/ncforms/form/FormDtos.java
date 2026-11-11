@@ -19,15 +19,15 @@ public final class FormDtos {
     }
 
     public record FormUpdateRequest(
-            @NotBlank(message = "Informe o título do formulário.") @Size(max = 200, message = "Título muito longo.") String title,
-            @Size(max = 5000, message = "Descrição muito longa.") String description,
-            @NotNull @Size(max = 200, message = "Limite de 200 campos por formulário.") List<@Valid @NotNull FieldDto> fields) {
+            @NotBlank(message = "Enter a form title.") @Size(max = 200, message = "Title is too long.") String title,
+            @Size(max = 5000, message = "Description is too long.") String description,
+            @NotNull @Size(max = 200, message = "Limit of 200 fields per form.") List<@Valid @NotNull FieldDto> fields) {
     }
 
-    /** Campo do formulário. {@code id} nulo indica um campo novo; {@code required} ausente equivale a false. */
+    /** Form field. A null {@code id} means a new field; a missing {@code required} means false. */
     public record FieldDto(
             UUID id,
-            @NotNull(message = "Informe o tipo do campo.") FieldType type,
+            @NotNull(message = "Enter the field type.") FieldType type,
             String label,
             String helpText,
             Boolean required,
@@ -41,7 +41,7 @@ public final class FormDtos {
         }
     }
 
-    /** Opção de escolha. {@code id} nulo indica uma opção nova. */
+    /** Choice option. A null {@code id} means a new option. */
     public record OptionDto(UUID id, String label) {
         static OptionDto from(FieldOption option) {
             return new OptionDto(option.getId(), option.getLabel());
@@ -67,7 +67,7 @@ public final class FormDtos {
         }
     }
 
-    /** Visão pública do formulário publicado (sem dados internos do dono). */
+    /** Public view of a published form (without the owner's internal data). */
     public record PublicFormDto(String slug, String title, String description, List<FieldDto> fields) {
 
         static PublicFormDto from(Form form) {

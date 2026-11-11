@@ -41,7 +41,7 @@ const ICONS = {
 
 export type IconName = keyof typeof ICONS;
 
-/** Ícones de traço (24×24) desenhados em SVG inline; herdam a cor do texto. */
+/** Stroke icons (24×24) drawn as inline SVG; they inherit the text color. */
 @Component({
   selector: 'app-icon',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,6 +66,6 @@ export class IconComponent {
   readonly size = input(20);
 
   protected readonly path = computed(() => ICONS[this.name()]);
-  /** Ícones formados por pontos precisam de traço mais grosso para ficarem visíveis. */
+  /** Dot-based icons need a thicker stroke to stay visible. */
   protected readonly strokeWidth = computed(() => (this.name() === 'grip' || this.name() === 'dots' ? 3 : 2));
 }

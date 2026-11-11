@@ -21,7 +21,7 @@ const PAGE_SIZE = 20;
   template: `
     <div class="border-b border-slate-200 bg-white">
       <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 py-4">
-        <a routerLink="/" class="icon-btn" title="Voltar" aria-label="Voltar para meus formulários">
+        <a routerLink="/" class="icon-btn" title="Back" aria-label="Back to my forms">
           <app-icon name="arrow-left" [size]="18" />
         </a>
         <div class="min-w-0 flex-1">
@@ -38,14 +38,14 @@ const PAGE_SIZE = 20;
         @if (form(); as f) {
           @if (f.status !== 'DRAFT') {
             <button type="button" class="btn-secondary" (click)="copyLink(f)">
-              <app-icon name="link" [size]="16" /> Copiar link
+              <app-icon name="link" [size]="16" /> Copy link
             </button>
             <a class="btn-ghost" [href]="'/f/' + f.slug" target="_blank" rel="noopener">
-              <app-icon name="external" [size]="16" /> Abrir
+              <app-icon name="external" [size]="16" /> Open
             </a>
           }
           <a class="btn-primary" [routerLink]="['/forms', f.id, 'edit']">
-            <app-icon name="pencil" [size]="16" /> Editar formulário
+            <app-icon name="pencil" [size]="16" /> Edit form
           </a>
         }
       </div>
@@ -55,7 +55,7 @@ const PAGE_SIZE = 20;
       @if (loadError()) {
         <div class="card p-8 text-center">
           <p class="text-sm text-slate-600">{{ loadError() }}</p>
-          <a routerLink="/" class="btn-secondary mt-4">Voltar</a>
+          <a routerLink="/" class="btn-secondary mt-4">Back</a>
         </div>
       } @else if (page(); as p) {
         @if (p.totalItems === 0) {
@@ -63,24 +63,24 @@ const PAGE_SIZE = 20;
             <span class="flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 text-brand-600">
               <app-icon name="inbox" [size]="28" />
             </span>
-            <h2 class="mt-4 font-medium text-slate-900">Ainda não há respostas</h2>
+            <h2 class="mt-4 font-medium text-slate-900">No responses yet</h2>
             @if (form()?.status === 'PUBLISHED') {
-              <p class="mt-1 max-w-sm text-sm text-slate-500">Compartilhe o link do formulário para começar a receber respostas.</p>
+              <p class="mt-1 max-w-sm text-sm text-slate-500">Share the form link to start receiving responses.</p>
               <button type="button" class="btn-primary mt-6" (click)="copyLink(form()!)">
-                <app-icon name="link" [size]="16" /> Copiar link
+                <app-icon name="link" [size]="16" /> Copy link
               </button>
             } @else if (form()?.status === 'DRAFT') {
-              <p class="mt-1 max-w-sm text-sm text-slate-500">Publique o formulário para que ele possa receber respostas.</p>
-              <a class="btn-primary mt-6" [routerLink]="['/forms', id(), 'edit']">Ir para o editor</a>
+              <p class="mt-1 max-w-sm text-sm text-slate-500">Publish the form so it can receive responses.</p>
+              <a class="btn-primary mt-6" [routerLink]="['/forms', id(), 'edit']">Go to editor</a>
             } @else {
-              <p class="mt-1 max-w-sm text-sm text-slate-500">Este formulário está fechado para novas respostas.</p>
+              <p class="mt-1 max-w-sm text-sm text-slate-500">This form is closed to new responses.</p>
             }
           </div>
         } @else {
           <div class="grid gap-6 lg:grid-cols-[18rem_1fr]">
-            <!-- Lista -->
+            <!-- List -->
             <aside class="card h-fit overflow-hidden">
-              <h2 class="border-b border-slate-100 px-4 py-3 text-sm font-medium text-slate-700">Respostas</h2>
+              <h2 class="border-b border-slate-100 px-4 py-3 text-sm font-medium text-slate-700">Responses</h2>
               <ul class="max-h-[60vh] overflow-y-auto">
                 @for (item of p.items; track item.id) {
                   <li>
@@ -91,39 +91,39 @@ const PAGE_SIZE = 20;
                       (click)="select(item.id)"
                     >
                       <span class="font-medium">#{{ item.number }}</span>
-                      <span class="text-xs text-slate-500">{{ item.submittedAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                      <span class="text-xs text-slate-500">{{ item.submittedAt | date: 'MMM d, y, h:mm a' }}</span>
                     </button>
                   </li>
                 }
               </ul>
               @if (p.totalPages > 1) {
                 <div class="flex items-center justify-between border-t border-slate-100 px-2 py-2 text-xs text-slate-500">
-                  <button type="button" class="icon-btn h-8 w-8" [disabled]="p.page === 0" (click)="loadPage(p.page - 1)" aria-label="Página anterior">
+                  <button type="button" class="icon-btn h-8 w-8" [disabled]="p.page === 0" (click)="loadPage(p.page - 1)" aria-label="Previous page">
                     <app-icon name="chevron-left" [size]="16" />
                   </button>
-                  Página {{ p.page + 1 }} de {{ p.totalPages }}
-                  <button type="button" class="icon-btn h-8 w-8" [disabled]="p.page + 1 >= p.totalPages" (click)="loadPage(p.page + 1)" aria-label="Próxima página">
+                  Page {{ p.page + 1 }} of {{ p.totalPages }}
+                  <button type="button" class="icon-btn h-8 w-8" [disabled]="p.page + 1 >= p.totalPages" (click)="loadPage(p.page + 1)" aria-label="Next page">
                     <app-icon name="chevron-right" [size]="16" />
                   </button>
                 </div>
               }
             </aside>
 
-            <!-- Resposta individual -->
+            <!-- Individual response -->
             <section class="min-w-0">
               @if (detail(); as d) {
                 <div class="card mb-4 flex flex-wrap items-center gap-3 px-4 py-3">
                   <button type="button" class="icon-btn" [disabled]="!d.previousId || loadingDetail()" (click)="select(d.previousId!)"
-                          title="Resposta anterior" aria-label="Resposta anterior">
+                          title="Previous response" aria-label="Previous response">
                     <app-icon name="chevron-left" [size]="20" />
                   </button>
-                  <p class="text-sm font-medium text-slate-800">Resposta {{ d.number }} de {{ d.total }}</p>
+                  <p class="text-sm font-medium text-slate-800">Response {{ d.number }} of {{ d.total }}</p>
                   <button type="button" class="icon-btn" [disabled]="!d.nextId || loadingDetail()" (click)="select(d.nextId!)"
-                          title="Próxima resposta" aria-label="Próxima resposta">
+                          title="Next response" aria-label="Next response">
                     <app-icon name="chevron-right" [size]="20" />
                   </button>
-                  <p class="flex-1 text-right text-xs text-slate-500">Enviada em {{ d.submittedAt | date: "dd/MM/yyyy 'às' HH:mm" }}</p>
-                  <button type="button" class="icon-btn hover:text-red-600" (click)="deleteResponse(d)" title="Excluir resposta" aria-label="Excluir resposta">
+                  <p class="flex-1 text-right text-xs text-slate-500">Submitted {{ d.submittedAt | date: "MMM d, y 'at' h:mm a" }}</p>
+                  <button type="button" class="icon-btn hover:text-red-600" (click)="deleteResponse(d)" title="Delete response" aria-label="Delete response">
                     <app-icon name="trash" [size]="18" />
                   </button>
                 </div>
@@ -134,13 +134,13 @@ const PAGE_SIZE = 20;
                       <div class="flex flex-wrap items-center gap-2">
                         <h3 class="font-medium text-slate-900">{{ item.label }}</h3>
                         @if (item.archived) {
-                          <span class="badge bg-slate-100 text-slate-600" title="Esta pergunta foi removida ou alterada no formulário">Pergunta removida</span>
+                          <span class="badge bg-slate-100 text-slate-600" title="This question was removed or changed in the form">Question removed</span>
                         }
                       </div>
                       <p class="mt-0.5 text-xs text-slate-400">{{ typeLabel(item) }}</p>
                       <div class="mt-3">
                         @if (item.values.length === 0) {
-                          <p class="text-sm italic text-slate-400">Sem resposta</p>
+                          <p class="text-sm italic text-slate-400">No answer</p>
                         } @else if (item.type === 'CHECKBOX') {
                           <ul class="flex flex-wrap gap-2">
                             @for (v of item.values; track $index) {
@@ -173,11 +173,11 @@ export class ResultsPage implements OnInit {
   private readonly toast = inject(ToastService);
   private readonly confirm = inject(ConfirmService);
 
-  /** Parâmetro de rota e query param (?r=) ligados via withComponentInputBinding. */
+  /** Route parameter and query param (?r=) bound via withComponentInputBinding. */
   readonly id = input.required<string>();
   readonly r = input<string>();
 
-  protected readonly responsePlural = { '=0': 'Nenhuma resposta', '=1': '1 resposta', other: '# respostas' };
+  protected readonly responsePlural = { '=0': 'No responses', '=1': '1 response', other: '# responses' };
 
   protected readonly form = signal<FormDetail | null>(null);
   protected readonly page = signal<Page<ResponseSummary> | null>(null);
@@ -230,7 +230,7 @@ export class ResultsPage implements OnInit {
         this.loadingDetail.set(false);
         const apiError = toApiError(err);
         if (apiError.status === 404) {
-          // Resposta inexistente (ex.: link antigo): mostra a mais recente.
+          // Response doesn't exist (e.g. an old link): show the most recent one.
           const first = this.page()?.items[0]?.id;
           if (first && first !== responseId) {
             this.select(first);
@@ -244,9 +244,9 @@ export class ResultsPage implements OnInit {
 
   protected async deleteResponse(detail: ResponseDetail): Promise<void> {
     const confirmed = await this.confirm.ask({
-      title: 'Excluir resposta?',
-      message: `A resposta #${detail.number} será excluída permanentemente.`,
-      confirmLabel: 'Excluir',
+      title: 'Delete response?',
+      message: `Response #${detail.number} will be permanently deleted.`,
+      confirmLabel: 'Delete',
       danger: true,
     });
     if (!confirmed) {
@@ -254,7 +254,7 @@ export class ResultsPage implements OnInit {
     }
     this.responsesApi.delete(this.id(), detail.id).subscribe({
       next: () => {
-        this.toast.success('Resposta excluída.');
+        this.toast.success('Response deleted.');
         const neighbor = detail.previousId ?? detail.nextId ?? undefined;
         this.selectedId.set(null);
         this.detail.set(null);
@@ -269,7 +269,7 @@ export class ResultsPage implements OnInit {
   protected async copyLink(form: FormDetail): Promise<void> {
     const url = publicFormUrl(form.slug);
     if (await copyToClipboard(url)) {
-      this.toast.success('Link copiado.');
+      this.toast.success('Link copied.');
     } else {
       this.toast.info(url);
     }
@@ -283,10 +283,7 @@ export class ResultsPage implements OnInit {
     const value = item.values.join(', ');
     if (item.type === 'DATE') {
       const [y, m, d] = value.split('-');
-      return d && m && y ? `${d}/${m}/${y}` : value;
-    }
-    if (item.type === 'NUMBER') {
-      return value.replace('.', ',');
+      return d && m && y ? `${m}/${d}/${y}` : value;
     }
     return value;
   }

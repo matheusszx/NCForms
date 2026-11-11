@@ -45,10 +45,10 @@ type PageState = 'loading' | 'ready' | 'submitted' | 'not-found' | 'closed' | 'e
               <div class="p-8">
                 <h1 class="text-2xl font-semibold text-slate-900">{{ form()?.title }}</h1>
                 <p class="mt-4 flex items-center gap-2 text-slate-700">
-                  <app-icon name="check-circle" class="text-emerald-600" /> Sua resposta foi registrada. Obrigado!
+                  <app-icon name="check-circle" class="text-emerald-600" /> Your response has been recorded. Thank you!
                 </p>
                 <button type="button" class="btn-ghost mt-6 px-0 text-brand-700 hover:bg-transparent hover:underline" (click)="answerAgain()">
-                  Enviar outra resposta
+                  Submit another response
                 </button>
               </div>
             </section>
@@ -59,13 +59,13 @@ type PageState = 'loading' | 'ready' | 'submitted' | 'not-found' | 'closed' | 'e
               <h1 class="mt-4 text-xl font-semibold text-slate-900">{{ message().title }}</h1>
               <p class="mt-2 text-sm text-slate-600">{{ message().text }}</p>
               @if (state() === 'error') {
-                <button type="button" class="btn-secondary mt-6" (click)="load()">Tentar novamente</button>
+                <button type="button" class="btn-secondary mt-6" (click)="load()">Try again</button>
               }
             </section>
           }
         }
         <footer class="mt-10 flex justify-center opacity-70">
-          <span class="flex items-center gap-2 text-xs text-slate-500">Criado com <app-logo class="scale-75" /></span>
+          <span class="flex items-center gap-2 text-xs text-slate-500">Made with <app-logo class="scale-75" /></span>
         </footer>
       </div>
     </div>
@@ -94,20 +94,20 @@ export class PublicFormPage implements OnInit {
       case 'closed':
         return {
           icon: 'lock',
-          title: 'Formulário fechado',
-          text: 'Este formulário não está mais aceitando respostas.',
+          title: 'Form closed',
+          text: 'This form is no longer accepting responses.',
         };
       case 'not-found':
         return {
           icon: 'file',
-          title: 'Formulário não encontrado',
-          text: 'Verifique se o link está correto ou peça um novo link a quem o enviou.',
+          title: 'Form not found',
+          text: 'Check that the link is correct or ask whoever sent it for a new one.',
         };
       default:
         return {
           icon: 'alert',
-          title: 'Não foi possível carregar o formulário',
-          text: 'Verifique sua conexão e tente novamente.',
+          title: 'Could not load the form',
+          text: 'Check your connection and try again.',
         };
     }
   });

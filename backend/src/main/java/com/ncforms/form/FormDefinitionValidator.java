@@ -25,9 +25,9 @@ import com.ncforms.form.FormDtos.FieldDto;
 import com.ncforms.form.FormDtos.OptionDto;
 
 /**
- * Valida a estrutura enviada pelo editor e devolve os campos normalizados
- * (textos aparados, configurações restritas às chaves suportadas por cada tipo).
- * Erros usam chaves no formato {@code fields.<índice>.<atributo>}.
+ * Validates the structure sent by the editor and returns the normalized fields
+ * (trimmed texts, settings restricted to the keys each type supports).
+ * Errors use keys in the format {@code fields.<index>.<attribute>}.
  */
 @Component
 public class FormDefinitionValidator {
@@ -57,7 +57,7 @@ public class FormDefinitionValidator {
             normalized.add(validateField(fields.get(i), "fields." + i + ".", errors));
         }
         if (!errors.isEmpty()) {
-            throw new ValidationException("Revise os campos destacados do formulário.", errors);
+            throw new ValidationException("Please review the highlighted form fields.", errors);
         }
         return normalized;
     }
@@ -67,10 +67,10 @@ public class FormDefinitionValidator {
         String label = trimToNull(field.label());
         if (label == null) {
             errors.put(prefix + "label", type == FieldType.SECTION_TITLE
-                    ? "Informe o título da seção."
-                    : "Informe o texto da pergunta.");
+                    ? "Enter the section title."
+                    : "Enter the question text.");
         } else if (label.length() > MAX_LABEL_LENGTH) {
-            errors.put(prefix + "label", "Texto muito longo (máx. " + MAX_LABEL_LENGTH + " caracteres).");
+            errors.put(prefix + "label", "Text is too long (max. " + MAX_LABEL_LENGTH + " characters).");
         }
 
         List<OptionDto> options = type.hasOptions() ? validateOptions(field.options(), prefix, errors) : List.of();
@@ -82,19 +82,19 @@ public class FormDefinitionValidator {
 
     private List<OptionDto> validateOptions(List<OptionDto> options, String prefix, Map<String, String> errors) {
         if (options == null || options.isEmpty()) {
-            errors.put(prefix + "options", "Adicione pelo menos uma opção.");
+            errors.put(prefix + "options", "Add at least one option.");
             return List.of();
         }
         if (options.size() > MAX_OPTIONS) {
-            errors.put(prefix + "options", "Limite de " + MAX_OPTIONS + " opções por pergunta.");
+            errors.put(prefix + "options", "Limit of " + MAX_OPTIONS + " options per question.");
         }
         List<OptionDto> result = new ArrayList<>();
         for (OptionDto option : options) {
             String label = trimToNull(option.label());
             if (label == null) {
-                errors.putIfAbsent(prefix + "options", "Todas as opções precisam de um texto.");
+                errors.putIfAbsent(prefix + "options", "All options need a label.");
             } else if (label.length() > MAX_LABEL_LENGTH) {
-                errors.putIfAbsent(prefix + "options", "Texto de opção muito longo.");
+                errors.putIfAbsent(prefix + "options", "Option label is too long.");
             }
             result.add(new OptionDto(option.id(), label));
         }
@@ -113,13 +113,13 @@ public class FormDefinitionValidator {
                 if (TEXT_KEYS.contains(key)) {
                     String text = value.toString().trim();
                     if (text.length() > MAX_CONFIG_TEXT_LENGTH) {
-                        errors.put(prefix + "config", "Texto de configuração muito longo.");
+                        errors.put(prefix + "config", "Setting text is too long.");
                     }
                     config.put(key, text);
                 } else if (value instanceof Number) {
                     config.put(key, value);
                 } else {
-                    errors.put(prefix + "config", "Configuração inválida: \"" + key + "\" deve ser numérico.");
+                    errors.put(prefix + "config", "Invalid setting: \"" + key + "\" must be numeric.");
                 }
             }
         }
@@ -142,7 +142,7 @@ public class FormDefinitionValidator {
                 ? FieldConfig.DEFAULT_LONG_TEXT_MAX_LENGTH
                 : FieldConfig.DEFAULT_SHORT_TEXT_MAX_LENGTH;
         if (max.isPresent() && (max.get() < 1 || max.get() > limit)) {
-            return "O limite de caracteres deve estar entre 1 e " + limit + ".";
+            return "The character limit must be between 1 and " + limit + ".";
         }
         return null;
     }
@@ -151,7 +151,7 @@ public class FormDefinitionValidator {
         Optional<BigDecimal> min = FieldConfig.decimal(config, MIN);
         Optional<BigDecimal> max = FieldConfig.decimal(config, MAX);
         if (min.isPresent() && max.isPresent() && min.get().compareTo(max.get()) > 0) {
-            return "O valor mínimo não pode ser maior que o máximo.";
+            return "The minimum value cannot be greater than the maximum.";
         }
         return null;
     }
@@ -160,13 +160,13 @@ public class FormDefinitionValidator {
         Optional<Integer> min = FieldConfig.integer(config, MIN_SELECTED);
         Optional<Integer> max = FieldConfig.integer(config, MAX_SELECTED);
         if (min.isPresent() && (min.get() < 0 || min.get() > optionCount)) {
-            return "O mínimo de seleções deve estar entre 0 e o número de opções.";
+            return "The minimum selections must be between 0 and the number of options.";
         }
         if (max.isPresent() && (max.get() < 1 || max.get() > optionCount)) {
-            return "O máximo de seleções deve estar entre 1 e o número de opções.";
+            return "The maximum selections must be between 1 and the number of options.";
         }
         if (min.isPresent() && max.isPresent() && min.get() > max.get()) {
-            return "O mínimo de seleções não pode ser maior que o máximo.";
+            return "The minimum selections cannot be greater than the maximum.";
         }
         return null;
     }
@@ -175,10 +175,10 @@ public class FormDefinitionValidator {
         int min = FieldConfig.scaleMin(config);
         int max = FieldConfig.scaleMax(config);
         if (min < 0 || min > 1) {
-            return "A escala deve começar em 0 ou 1.";
+            return "The scale must start at 0 or 1.";
         }
         if (max < 2 || max > 10) {
-            return "A escala deve terminar entre 2 e 10.";
+            return "The scale must end between 2 and 10.";
         }
         return null;
     }

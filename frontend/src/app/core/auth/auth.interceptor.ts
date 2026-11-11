@@ -4,7 +4,7 @@ import { catchError, throwError } from 'rxjs';
 
 import { AuthService } from './auth.service';
 
-/** Anexa o token às chamadas autenticadas da API e trata sessões expiradas (401). */
+/** Attaches the token to authenticated API calls and handles expired sessions (401). */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthService);
   const isPrivateApi = req.url.startsWith('/api/') && !req.url.startsWith('/api/public/');

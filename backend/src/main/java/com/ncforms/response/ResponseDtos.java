@@ -15,14 +15,14 @@ public final class ResponseDtos {
     private ResponseDtos() {
     }
 
-    /** Respostas enviadas pelo formulário público, indexadas pelo id do campo. */
+    /** Answers submitted through the public form, keyed by field id. */
     public record SubmitResponseRequest(@NotNull Map<String, JsonNode> answers) {
     }
 
     public record SubmitResponseResult(UUID id) {
     }
 
-    /** {@code number} é a posição cronológica da resposta (1 = primeira recebida). */
+    /** {@code number} is the chronological position of the response (1 = first received). */
     public record ResponseSummaryDto(UUID id, long number, Instant submittedAt) {
     }
 
@@ -31,8 +31,8 @@ public final class ResponseDtos {
     }
 
     /**
-     * Pergunta e resposta prontas para exibição. {@code values} vazio = sem resposta;
-     * para opções, contém os textos das opções escolhidas.
+     * Question and answer ready for display. Empty {@code values} = no answer;
+     * for options, it contains the labels of the chosen options.
      */
     public record AnswerItemDto(UUID fieldId, String label, FieldType type, boolean archived, List<String> values) {
     }

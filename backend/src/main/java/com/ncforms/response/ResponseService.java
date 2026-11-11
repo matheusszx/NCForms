@@ -29,8 +29,8 @@ import com.ncforms.response.ResponseDtos.SubmitResponseResult;
 @Service
 public class ResponseService {
 
-    static final String NOT_FOUND = "Resposta não encontrada.";
-    static final String REMOVED_OPTION = "(opção removida)";
+    static final String NOT_FOUND = "Response not found.";
+    static final String REMOVED_OPTION = "(option removed)";
     static final int MAX_PAGE_SIZE = 100;
 
     private final ResponseRepository responses;
@@ -54,7 +54,7 @@ public class ResponseService {
         return new SubmitResponseResult(response.getId());
     }
 
-    /** Lista paginada, da mais recente para a mais antiga. */
+    /** Paginated list, from newest to oldest. */
     @Transactional(readOnly = true)
     public PageDto<ResponseSummaryDto> list(UUID ownerId, UUID formId, int page, int size) {
         formService.getOwned(ownerId, formId);
@@ -99,8 +99,8 @@ public class ResponseService {
     }
 
     /**
-     * Monta a lista pergunta → resposta na ordem do formulário. Campos arquivados
-     * aparecem apenas se esta resposta os preencheu.
+     * Builds the question → answer list in form order. Archived fields
+     * only appear if this response filled them in.
      */
     private List<AnswerItemDto> buildItems(Form form, Response response) {
         Map<UUID, JsonNode> answerByField = response.getAnswers().stream()
@@ -125,7 +125,7 @@ public class ResponseService {
             return List.of();
         }
         if (field.getType().hasOptions()) {
-            // Inclui opções arquivadas para exibir respostas antigas.
+            // Include archived options to display old answers.
             Map<String, String> labels = new HashMap<>();
             field.getOptions().forEach(o -> labels.put(o.getId().toString(), o.getLabel()));
             Function<JsonNode, String> toLabel = node -> labels.getOrDefault(node.asString(), REMOVED_OPTION);

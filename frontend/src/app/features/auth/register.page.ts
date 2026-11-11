@@ -12,47 +12,47 @@ import { AuthLayoutComponent } from './auth-layout.component';
   imports: [ReactiveFormsModule, RouterLink, AuthLayoutComponent, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-auth-layout heading="Criar conta" subheading="Comece a criar formulários em poucos minutos.">
+    <app-auth-layout heading="Create account" subheading="Start building forms in minutes.">
       @if (registrationEnabled() === false) {
         <div class="flex items-start gap-2 rounded-lg bg-slate-100 px-3 py-3 text-sm text-slate-700">
           <app-icon name="lock" [size]="18" />
-          O cadastro de novas contas está desativado neste servidor. Fale com o administrador.
+          New account registration is disabled on this server. Contact the administrator.
         </div>
       } @else {
         <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4" novalidate>
           <div>
-            <label class="label" for="name">Nome</label>
+            <label class="label" for="name">Name</label>
             <input id="name" class="input" formControlName="name" autocomplete="name"
                    [class.input-invalid]="fieldError('name')" />
             @if (fieldError('name'); as msg) { <p class="field-error">{{ msg }}</p> }
           </div>
           <div>
-            <label class="label" for="email">E-mail</label>
+            <label class="label" for="email">Email</label>
             <input id="email" type="email" class="input" formControlName="email" autocomplete="email"
                    [class.input-invalid]="fieldError('email')" />
             @if (fieldError('email'); as msg) { <p class="field-error">{{ msg }}</p> }
           </div>
           <div>
-            <label class="label" for="password">Senha</label>
+            <label class="label" for="password">Password</label>
             <input id="password" type="password" class="input" formControlName="password" autocomplete="new-password"
                    [class.input-invalid]="fieldError('password')" />
             @if (fieldError('password'); as msg) {
               <p class="field-error">{{ msg }}</p>
             } @else {
-              <p class="mt-1 text-xs text-slate-500">Mínimo de 8 caracteres.</p>
+              <p class="mt-1 text-xs text-slate-500">At least 8 characters.</p>
             }
           </div>
           @if (error()) {
             <p class="field-error" role="alert"><app-icon name="alert" [size]="16" />{{ error() }}</p>
           }
           <button type="submit" class="btn-primary w-full" [disabled]="loading()">
-            {{ loading() ? 'Criando conta…' : 'Criar conta' }}
+            {{ loading() ? 'Creating account…' : 'Create account' }}
           </button>
         </form>
       }
       <p class="mt-6 text-center text-sm text-slate-600">
-        Já tem conta?
-        <a routerLink="/login" class="font-medium text-brand-700 hover:underline">Entrar</a>
+        Already have an account?
+        <a routerLink="/login" class="font-medium text-brand-700 hover:underline">Sign in</a>
       </p>
     </app-auth-layout>
   `,
@@ -90,15 +90,15 @@ export class RegisterPage implements OnInit {
       return null;
     }
     if (control.hasError('required')) {
-      return 'Campo obrigatório.';
+      return 'This field is required.';
     }
     if (control.hasError('email')) {
-      return 'E-mail inválido.';
+      return 'Invalid email address.';
     }
     if (control.hasError('minlength')) {
-      return 'A senha deve ter pelo menos 8 caracteres.';
+      return 'Password must be at least 8 characters.';
     }
-    return 'Valor muito longo.';
+    return 'Value is too long.';
   }
 
   protected submit(): void {

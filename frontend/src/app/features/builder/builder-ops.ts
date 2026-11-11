@@ -1,13 +1,13 @@
 import { defaultConfig, fieldTypeInfo } from '../../core/field-types';
 import { FieldOption, FieldType, FormField } from '../../core/models';
 
-/** Campo no editor: `key` é um identificador local estável (campos novos ainda não têm id). */
+/** Field in the editor: `key` is a stable local identifier (new fields don't have an id yet). */
 export interface EditorField extends FormField {
   key: string;
 }
 
-export const DEFAULT_QUESTION_LABEL = 'Pergunta sem título';
-export const DEFAULT_SECTION_LABEL = 'Nova seção';
+export const DEFAULT_QUESTION_LABEL = 'Untitled question';
+export const DEFAULT_SECTION_LABEL = 'New section';
 
 let keyCounter = 0;
 
@@ -20,7 +20,7 @@ export function toEditorFields(fields: FormField[]): EditorField[] {
   return fields.map((f) => ({ ...f, config: { ...f.config }, options: f.options.map((o) => ({ ...o })), key: newKey() }));
 }
 
-/** Remove a chave local antes de enviar para a API. */
+/** Removes the local key before sending to the API. */
 export function toRequestFields(fields: EditorField[]): FormField[] {
   return fields.map(({ key: _key, ...field }) => field);
 }
@@ -34,11 +34,11 @@ export function createField(type: FieldType): EditorField {
     helpText: null,
     required: false,
     config: defaultConfig(type),
-    options: fieldTypeInfo(type).hasOptions ? [{ id: null, label: 'Opção 1' }] : [],
+    options: fieldTypeInfo(type).hasOptions ? [{ id: null, label: 'Option 1' }] : [],
   };
 }
 
-/** Insere após `afterIndex` (ou no fim quando -1/fora do intervalo). Retorna a nova lista e o índice inserido. */
+/** Inserts after `afterIndex` (or at the end when -1/out of range). Returns the new list and the inserted index. */
 export function insertField(
   fields: EditorField[],
   field: EditorField,
@@ -50,7 +50,7 @@ export function insertField(
   return { fields: next, index };
 }
 
-/** Duplica o campo como um novo (sem ids), logo abaixo do original. */
+/** Duplicates the field as a new one (no ids), right below the original. */
 export function duplicateField(fields: EditorField[], index: number): { fields: EditorField[]; index: number } {
   const source = fields[index];
   const copy: EditorField = {
@@ -83,14 +83,14 @@ export function patchField(fields: EditorField[], index: number, patch: Partial<
 }
 
 /**
- * Troca o tipo mantendo o que faz sentido: texto e ajuda sempre; opções entre tipos de escolha;
- * configurações voltam ao padrão do novo tipo.
+ * Changes the type keeping what makes sense: label and help text always; options between choice types;
+ * settings reset to the new type's defaults.
  */
 export function changeFieldType(field: EditorField, type: FieldType): EditorField {
   const info = fieldTypeInfo(type);
   let options: FieldOption[] = [];
   if (info.hasOptions) {
-    options = field.options.length > 0 ? field.options : [{ id: null, label: 'Opção 1' }];
+    options = field.options.length > 0 ? field.options : [{ id: null, label: 'Option 1' }];
   }
   let label = field.label;
   if (type === 'SECTION_TITLE' && label === DEFAULT_QUESTION_LABEL) {
@@ -102,8 +102,8 @@ export function changeFieldType(field: EditorField, type: FieldType): EditorFiel
 }
 
 /**
- * Agrupa erros da API por índice de campo. Aceita chaves do validador ("fields.2.label")
- * e da Bean Validation ("fields[2].type").
+ * Groups API errors by field index. Accepts keys from the validator ("fields.2.label")
+ * and from Bean Validation ("fields[2].type").
  */
 export function errorsByFieldIndex(fieldErrors: Record<string, string>): Map<number, Record<string, string>> {
   const result = new Map<number, Record<string, string>>();

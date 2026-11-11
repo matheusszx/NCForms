@@ -50,15 +50,15 @@ class ApiIntegrationTest {
         String colorId = form.get("fields").get(2).get("id").asString();
         String blueId = form.get("fields").get(2).get("options").get(1).get("id").asString();
 
-        // Rascunho ainda não é público.
+        // A draft is not public yet.
         mvc.perform(get("/api/public/forms/" + slug)).andExpect(status().isNotFound());
 
         call(post("/api/forms/" + formId + "/publish"), token, null, 200);
         JsonNode publicForm = call(get("/api/public/forms/" + slug), null, null, 200);
-        assertThat(publicForm.get("title").asString()).isEqualTo("Pesquisa");
+        assertThat(publicForm.get("title").asString()).isEqualTo("Survey");
         assertThat(publicForm.has("id")).isFalse();
 
-        // Obrigatório ausente → 400 com erro por campo.
+        // Missing required answer → 400 with a per-field error.
         JsonNode error = call(post("/api/public/forms/" + slug + "/responses"), null,
                 Map.of("answers", Map.of(colorId, blueId)), 400);
         assertThat(error.get("fieldErrors").has(nameId)).isTrue();
@@ -80,7 +80,7 @@ class ApiIntegrationTest {
         assertThat(detail.get("nextId").isNull()).isTrue();
         assertThat(detail.get("previousId").isNull()).isFalse();
         assertThat(detail.get("items").get(0).get("values").get(0).asString()).isEqualTo("Bruno");
-        assertThat(detail.get("items").get(1).get("values").get(0).asString()).isEqualTo("Azul");
+        assertThat(detail.get("items").get(1).get("values").get(0).asString()).isEqualTo("Blue");
 
         JsonNode list = call(get("/api/forms"), token, null, 200);
         assertThat(list.get(0).get("responseCount").asInt()).isEqualTo(2);
@@ -99,9 +99,9 @@ class ApiIntegrationTest {
         JsonNode submitted = call(post("/api/public/forms/" + slug + "/responses"), null,
                 Map.of("answers", Map.of(nameId, "Carla")), 201);
 
-        // Remove o campo "Nome" (que já tem resposta) e mantém só a seção.
+        // Remove the "Name" field (which already has an answer) and keep only the section.
         JsonNode updated = call(put("/api/forms/" + formId), token, Map.of(
-                "title", "Pesquisa",
+                "title", "Survey",
                 "fields", List.of(json.convertValue(form.get("fields").get(0), Map.class))), 200);
         assertThat(updated.get("fields")).hasSize(1);
 
@@ -144,32 +144,32 @@ class ApiIntegrationTest {
 
     @Test
     void loginWithWrongPasswordFails() throws Exception {
-        String email = "user-" + UUID.randomUUID() + "@teste.com";
-        call(post("/api/auth/register"), null, Map.of("name", "Ana", "email", email, "password", "senha-segura"), 201);
+        String email = "user-" + UUID.randomUUID() + "@test.com";
+        call(post("/api/auth/register"), null, Map.of("name", "Ana", "email", email, "password", "secure-password"), 201);
 
-        call(post("/api/auth/login"), null, Map.of("email", email, "password", "errada123"), 401);
-        JsonNode ok = call(post("/api/auth/login"), null, Map.of("email", email.toUpperCase(), "password", "senha-segura"), 200);
+        call(post("/api/auth/login"), null, Map.of("email", email, "password", "wrong1234"), 401);
+        JsonNode ok = call(post("/api/auth/login"), null, Map.of("email", email.toUpperCase(), "password", "secure-password"), 200);
         assertThat(ok.get("token").asString()).isNotBlank();
     }
 
     private String register() throws Exception {
-        String email = "user-" + UUID.randomUUID() + "@teste.com";
+        String email = "user-" + UUID.randomUUID() + "@test.com";
         JsonNode auth = call(post("/api/auth/register"), null,
-                Map.of("name", "Teste", "email", email, "password", "senha-segura"), 201);
+                Map.of("name", "Test", "email", email, "password", "secure-password"), 201);
         return auth.get("token").asString();
     }
 
-    /** Cria um formulário com [seção, "Nome" (obrigatório), "Cor" (radio Vermelho/Azul)]. */
+    /** Creates a form with [section, "Name" (required), "Color" (radio Red/Blue)]. */
     private JsonNode createFormWithQuestions(String token) throws Exception {
-        JsonNode created = call(post("/api/forms"), token, Map.of("title", "Pesquisa"), 201);
+        JsonNode created = call(post("/api/forms"), token, Map.of("title", "Survey"), 201);
         Map<String, Object> body = Map.of(
-                "title", "Pesquisa",
-                "description", "Descrição",
+                "title", "Survey",
+                "description", "Description",
                 "fields", List.of(
-                        Map.of("type", "SECTION_TITLE", "label", "Dados"),
-                        Map.of("type", "SHORT_TEXT", "label", "Nome", "required", true),
-                        Map.of("type", "RADIO", "label", "Cor", "options",
-                                List.of(Map.of("label", "Vermelho"), Map.of("label", "Azul")))));
+                        Map.of("type", "SECTION_TITLE", "label", "Details"),
+                        Map.of("type", "SHORT_TEXT", "label", "Name", "required", true),
+                        Map.of("type", "RADIO", "label", "Color", "options",
+                                List.of(Map.of("label", "Red"), Map.of("label", "Blue")))));
         return call(put("/api/forms/" + created.get("id").asString()), token, body, 200);
     }
 

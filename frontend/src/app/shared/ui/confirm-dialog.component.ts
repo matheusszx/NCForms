@@ -19,14 +19,14 @@ import { ConfirmService } from '../../core/confirm.service';
           <h2 class="text-lg font-semibold text-slate-900">{{ dialog.title }}</h2>
           <p class="mt-2 text-sm text-slate-600">{{ dialog.message }}</p>
           <div class="mt-6 flex justify-end gap-2">
-            <button type="button" class="btn-secondary" (click)="confirm.answer(false)">Cancelar</button>
+            <button type="button" class="btn-secondary" (click)="confirm.answer(false)">Cancel</button>
             <button
               type="button"
               [class]="dialog.danger ? 'btn-danger' : 'btn-primary'"
               (click)="confirm.answer(true)"
               autofocus
             >
-              {{ dialog.confirmLabel ?? 'Confirmar' }}
+              {{ dialog.confirmLabel ?? 'Confirm' }}
             </button>
           </div>
         </div>

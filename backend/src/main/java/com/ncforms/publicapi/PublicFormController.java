@@ -17,7 +17,7 @@ import com.ncforms.response.ResponseService;
 
 import jakarta.validation.Valid;
 
-/** Endpoints acessados pelos respondentes, sem autenticação. */
+/** Endpoints used by respondents, without authentication. */
 @RestController
 @RequestMapping("/api/public/forms/{slug}")
 public class PublicFormController {

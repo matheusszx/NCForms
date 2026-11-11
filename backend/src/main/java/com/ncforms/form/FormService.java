@@ -27,9 +27,9 @@ import com.ncforms.response.ResponseRepository.FormResponseCount;
 @Service
 public class FormService {
 
-    static final String DEFAULT_TITLE = "Formulário sem título";
-    static final String NOT_FOUND = "Formulário não encontrado.";
-    static final String CLOSED = "Este formulário não está mais aceitando respostas.";
+    static final String DEFAULT_TITLE = "Untitled form";
+    static final String NOT_FOUND = "Form not found.";
+    static final String CLOSED = "This form is no longer accepting responses.";
 
     private final FormRepository forms;
     private final ResponseRepository responses;
@@ -79,8 +79,8 @@ public class FormService {
     }
 
     /**
-     * Salva a estrutura completa do formulário. Campos/opções são casados pelo id;
-     * itens removidos que já possuem respostas são arquivados para preservar o histórico.
+     * Saves the complete form structure. Fields/options are matched by id;
+     * removed items that already have answers are archived to preserve history.
      */
     @Transactional
     public FormDetailDto update(UUID ownerId, UUID formId, FormUpdateRequest request) {
@@ -100,7 +100,7 @@ public class FormService {
         Form form = getOwned(ownerId, formId);
         boolean hasQuestion = form.getActiveFields().stream().anyMatch(f -> f.getType().isInput());
         if (!hasQuestion) {
-            throw ApiException.badRequest("Adicione pelo menos uma pergunta antes de publicar.");
+            throw ApiException.badRequest("Add at least one question before publishing.");
         }
         form.setStatus(FormStatus.PUBLISHED);
         form.touch();
@@ -111,7 +111,7 @@ public class FormService {
     public FormDetailDto close(UUID ownerId, UUID formId) {
         Form form = getOwned(ownerId, formId);
         if (form.getStatus() == FormStatus.DRAFT) {
-            throw ApiException.badRequest("Apenas formulários publicados podem ser fechados.");
+            throw ApiException.badRequest("Only published forms can be closed.");
         }
         form.setStatus(FormStatus.CLOSED);
         form.touch();
@@ -128,14 +128,14 @@ public class FormService {
         return PublicFormDto.from(getAcceptingResponses(slug));
     }
 
-    /** Formulário do dono informado; 404 também quando pertence a outro usuário (não revela existência). */
+    /** Form owned by the given user; also 404 when it belongs to another user (doesn't reveal existence). */
     @Transactional(readOnly = true)
     public Form getOwned(UUID ownerId, UUID formId) {
         return forms.findByIdAndOwnerId(formId, ownerId)
                 .orElseThrow(() -> ApiException.notFound(NOT_FOUND));
     }
 
-    /** Formulário publicado pelo link público; rascunhos não existem publicamente e fechados retornam 410. */
+    /** Published form by its public link; drafts don't exist publicly and closed forms return 410. */
     @Transactional(readOnly = true)
     public Form getAcceptingResponses(String slug) {
         Form form = forms.findBySlug(slug)
@@ -156,11 +156,11 @@ public class FormService {
         for (FieldDto dto : dtos) {
             FormField field = dto.id() == null ? null : existing.get(dto.id());
             if (field != null && kept.contains(field.getId())) {
-                field = null; // id duplicado no payload: trata como campo novo
+                field = null; // duplicate id in the payload: treat as a new field
             }
             if (field != null && field.getType() != dto.type()) {
                 if (answers.existsByFieldId(field.getId())) {
-                    // Mudar o tipo invalidaria respostas antigas: arquiva o campo antigo e cria outro.
+                    // Changing the type would invalidate old answers: archive the old field and create a new one.
                     field = null;
                 } else {
                     field.setType(dto.type());

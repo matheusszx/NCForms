@@ -22,7 +22,7 @@ import { IconComponent } from './icon.component';
         >
           <app-icon [name]="toast.kind === 'error' ? 'alert' : toast.kind === 'success' ? 'check-circle' : 'info'" [size]="18" />
           <span class="flex-1">{{ toast.message }}</span>
-          <button type="button" class="opacity-70 hover:opacity-100" (click)="toasts.dismiss(toast.id)" aria-label="Fechar">
+          <button type="button" class="opacity-70 hover:opacity-100" (click)="toasts.dismiss(toast.id)" aria-label="Close">
             <app-icon name="x" [size]="16" />
           </button>
         </div>

@@ -18,37 +18,37 @@ class FormDefinitionValidatorTest {
 
     @Test
     void normalizesTextsAndDropsUnsupportedConfigKeys() {
-        FieldDto input = new FieldDto(null, FieldType.SHORT_TEXT, "  Nome  ", "  ", true,
-                Map.of("placeholder", " Seu nome ", "min", 3, "foo", "bar"), List.of(new OptionDto(null, "x")));
+        FieldDto input = new FieldDto(null, FieldType.SHORT_TEXT, "  Name  ", "  ", true,
+                Map.of("placeholder", " Your name ", "min", 3, "foo", "bar"), List.of(new OptionDto(null, "x")));
 
         FieldDto result = validator.validate(List.of(input)).get(0);
 
-        assertThat(result.label()).isEqualTo("Nome");
+        assertThat(result.label()).isEqualTo("Name");
         assertThat(result.helpText()).isNull();
-        assertThat(result.config()).containsOnlyKeys("placeholder").containsEntry("placeholder", "Seu nome");
+        assertThat(result.config()).containsOnlyKeys("placeholder").containsEntry("placeholder", "Your name");
         assertThat(result.options()).isEmpty();
         assertThat(result.required()).isTrue();
     }
 
     @Test
     void sectionTitleIsNeverRequired() {
-        FieldDto input = new FieldDto(null, FieldType.SECTION_TITLE, "Parte 2", null, true, null, null);
+        FieldDto input = new FieldDto(null, FieldType.SECTION_TITLE, "Part 2", null, true, null, null);
 
         assertThat(validator.validate(List.of(input)).get(0).required()).isFalse();
     }
 
     @Test
     void missingRequiredFlagMeansOptional() {
-        FieldDto input = new FieldDto(null, FieldType.DATE, "Data", null, null, null, null);
+        FieldDto input = new FieldDto(null, FieldType.DATE, "Date", null, null, null, null);
 
         assertThat(validator.validate(List.of(input)).get(0).required()).isFalse();
     }
 
     @Test
     void choiceFieldsNeedNonBlankOptions() {
-        FieldDto noOptions = new FieldDto(null, FieldType.RADIO, "Cor?", null, false, null, List.of());
-        FieldDto blankOption = new FieldDto(null, FieldType.CHECKBOX, "Frutas?", null, false, null,
-                List.of(new OptionDto(null, "Maçã"), new OptionDto(null, " ")));
+        FieldDto noOptions = new FieldDto(null, FieldType.RADIO, "Color?", null, false, null, List.of());
+        FieldDto blankOption = new FieldDto(null, FieldType.CHECKBOX, "Fruits?", null, false, null,
+                List.of(new OptionDto(null, "Apple"), new OptionDto(null, " ")));
 
         ValidationException ex = catchThrowableOfType(ValidationException.class,
                 () -> validator.validate(List.of(noOptions, blankOption)));
@@ -58,7 +58,7 @@ class FormDefinitionValidatorTest {
 
     @Test
     void missingLabelIsReportedWithFieldIndex() {
-        FieldDto ok = new FieldDto(null, FieldType.EMAIL, "E-mail", null, false, null, null);
+        FieldDto ok = new FieldDto(null, FieldType.EMAIL, "Email", null, false, null, null);
         FieldDto missing = new FieldDto(null, FieldType.DATE, "", null, false, null, null);
 
         ValidationException ex = catchThrowableOfType(ValidationException.class,
@@ -69,11 +69,11 @@ class FormDefinitionValidatorTest {
 
     @Test
     void rejectsInconsistentRanges() {
-        FieldDto number = new FieldDto(null, FieldType.NUMBER, "Idade", null, false, Map.of("min", 10, "max", 1), null);
-        FieldDto scale = new FieldDto(null, FieldType.LINEAR_SCALE, "Nota", null, false, Map.of("max", 20), null);
-        FieldDto checkbox = new FieldDto(null, FieldType.CHECKBOX, "Itens", null, false, Map.of("maxSelected", 5),
+        FieldDto number = new FieldDto(null, FieldType.NUMBER, "Age", null, false, Map.of("min", 10, "max", 1), null);
+        FieldDto scale = new FieldDto(null, FieldType.LINEAR_SCALE, "Rating", null, false, Map.of("max", 20), null);
+        FieldDto checkbox = new FieldDto(null, FieldType.CHECKBOX, "Items", null, false, Map.of("maxSelected", 5),
                 List.of(new OptionDto(null, "A"), new OptionDto(null, "B")));
-        FieldDto text = new FieldDto(null, FieldType.SHORT_TEXT, "Obs", null, false, Map.of("maxLength", "muito"), null);
+        FieldDto text = new FieldDto(null, FieldType.SHORT_TEXT, "Notes", null, false, Map.of("maxLength", "many"), null);
 
         ValidationException ex = catchThrowableOfType(ValidationException.class,
                 () -> validator.validate(List.of(number, scale, checkbox, text)));

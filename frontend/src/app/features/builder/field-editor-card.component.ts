@@ -8,7 +8,7 @@ import { FieldConfig, FieldOption, FieldType } from '../../core/models';
 import { IconComponent } from '../../shared/ui/icon.component';
 import { EditorField } from './builder-ops';
 
-/** Cartão de edição de um campo. Mostra um resumo quando inativo e o editor completo quando selecionado. */
+/** Editor card for one field. Shows a summary when inactive and the full editor when selected. */
 @Component({
   selector: 'app-field-editor-card',
   imports: [FormsModule, NgTemplateOutlet, IconComponent, CdkDragHandle],
@@ -28,17 +28,17 @@ import { EditorField } from './builder-ops';
       <div
         cdkDragHandle
         class="flex cursor-grab justify-center pt-1.5 text-slate-300 hover:text-slate-500 active:cursor-grabbing"
-        title="Arraste para reordenar"
+        title="Drag to reorder"
       >
         <app-icon name="grip" [size]="18" class="rotate-90" />
       </div>
 
       @if (!active()) {
-        <!-- Resumo -->
+        <!-- Summary -->
         <div class="flex items-start gap-3 px-6 pb-5 pt-1">
           <div class="min-w-0 flex-1">
             <p class="truncate font-medium text-slate-900" [class.text-lg]="f.type === 'SECTION_TITLE'">
-              {{ f.label || '(sem texto)' }}
+              {{ f.label || '(no text)' }}
               @if (f.required) { <span class="text-red-600">*</span> }
             </p>
             @if (f.helpText) {
@@ -53,7 +53,7 @@ import { EditorField } from './builder-ops';
           </span>
         </div>
         @if (hasErrors()) {
-          <p class="field-error px-6 pb-4"><app-icon name="alert" [size]="16" /> Este campo precisa de ajustes.</p>
+          <p class="field-error px-6 pb-4"><app-icon name="alert" [size]="16" /> This field needs attention.</p>
         }
       } @else {
         <!-- Editor -->
@@ -66,8 +66,8 @@ import { EditorField } from './builder-ops';
                 [ngModel]="f.label"
                 (ngModelChange)="patch.emit({ label: $event })"
                 (focus)="selectDefault($event)"
-                [placeholder]="f.type === 'SECTION_TITLE' ? 'Título da seção' : 'Pergunta'"
-                [attr.aria-label]="f.type === 'SECTION_TITLE' ? 'Título da seção' : 'Texto da pergunta'"
+                [placeholder]="f.type === 'SECTION_TITLE' ? 'Section title' : 'Question'"
+                [attr.aria-label]="f.type === 'SECTION_TITLE' ? 'Section title' : 'Question text'"
                 data-autofocus
               />
               @if (errors()['label']; as msg) { <p class="field-error">{{ msg }}</p> }
@@ -76,7 +76,7 @@ import { EditorField } from './builder-ops';
               class="input sm:w-56"
               [ngModel]="f.type"
               (ngModelChange)="changeType.emit($event)"
-              aria-label="Tipo do campo"
+              aria-label="Field type"
             >
               @for (t of fieldTypes; track t.type) {
                 <option [value]="t.type">{{ t.label }}</option>
@@ -88,8 +88,8 @@ import { EditorField } from './builder-ops';
             class="input-underline text-sm"
             [ngModel]="f.helpText ?? ''"
             (ngModelChange)="patch.emit({ helpText: $event || null })"
-            [placeholder]="f.type === 'SECTION_TITLE' ? 'Descrição da seção (opcional)' : 'Descrição / instruções (opcional)'"
-            aria-label="Descrição"
+            [placeholder]="f.type === 'SECTION_TITLE' ? 'Section description (optional)' : 'Description / instructions (optional)'"
+            aria-label="Description"
           />
 
           @switch (f.type) {
@@ -98,41 +98,41 @@ import { EditorField } from './builder-ops';
             @case ('EMAIL') {
               <div class="grid gap-3 sm:grid-cols-2">
                 <label class="text-sm">
-                  <span class="label">Texto de exemplo</span>
-                  <input class="input" [ngModel]="f.config.placeholder ?? ''" (ngModelChange)="setConfig('placeholder', $event)" placeholder="nome@exemplo.com" />
+                  <span class="label">Placeholder text</span>
+                  <input class="input" [ngModel]="f.config.placeholder ?? ''" (ngModelChange)="setConfig('placeholder', $event)" placeholder="name@example.com" />
                 </label>
               </div>
             }
             @case ('NUMBER') {
               <div class="grid gap-3 sm:grid-cols-3">
                 <label class="text-sm">
-                  <span class="label">Texto de exemplo</span>
+                  <span class="label">Placeholder text</span>
                   <input class="input" [ngModel]="f.config.placeholder ?? ''" (ngModelChange)="setConfig('placeholder', $event)" />
                 </label>
                 <label class="text-sm">
-                  <span class="label">Valor mínimo</span>
+                  <span class="label">Minimum value</span>
                   <input type="number" class="input" [ngModel]="f.config.min ?? null" (ngModelChange)="setConfig('min', $event)" />
                 </label>
                 <label class="text-sm">
-                  <span class="label">Valor máximo</span>
+                  <span class="label">Maximum value</span>
                   <input type="number" class="input" [ngModel]="f.config.max ?? null" (ngModelChange)="setConfig('max', $event)" />
                 </label>
               </div>
             }
             @case ('DATE') {
               <div class="flex items-center gap-2 text-sm text-slate-500">
-                <app-icon name="calendar" [size]="16" /> O respondente escolherá uma data.
+                <app-icon name="calendar" [size]="16" /> The respondent will pick a date.
               </div>
             }
             @case ('LINEAR_SCALE') {
               <div class="space-y-3">
                 <div class="flex flex-wrap items-center gap-2 text-sm">
-                  <select class="input w-20" [ngModel]="f.config.min ?? 1" (ngModelChange)="setConfig('min', +$event)" aria-label="Início da escala">
+                  <select class="input w-20" [ngModel]="f.config.min ?? 1" (ngModelChange)="setConfig('min', +$event)" aria-label="Scale start">
                     <option [ngValue]="0">0</option>
                     <option [ngValue]="1">1</option>
                   </select>
-                  <span class="text-slate-500">até</span>
-                  <select class="input w-20" [ngModel]="f.config.max ?? 5" (ngModelChange)="setConfig('max', +$event)" aria-label="Fim da escala">
+                  <span class="text-slate-500">to</span>
+                  <select class="input w-20" [ngModel]="f.config.max ?? 5" (ngModelChange)="setConfig('max', +$event)" aria-label="Scale end">
                     @for (n of scaleMaxValues; track n) {
                       <option [ngValue]="n">{{ n }}</option>
                     }
@@ -140,12 +140,12 @@ import { EditorField } from './builder-ops';
                 </div>
                 <div class="grid gap-3 sm:grid-cols-2">
                   <label class="text-sm">
-                    <span class="label">Rótulo de {{ f.config.min ?? 1 }} (opcional)</span>
-                    <input class="input" [ngModel]="f.config.minLabel ?? ''" (ngModelChange)="setConfig('minLabel', $event)" placeholder="Ex.: Discordo" />
+                    <span class="label">Label for {{ f.config.min ?? 1 }} (optional)</span>
+                    <input class="input" [ngModel]="f.config.minLabel ?? ''" (ngModelChange)="setConfig('minLabel', $event)" placeholder="e.g. Disagree" />
                   </label>
                   <label class="text-sm">
-                    <span class="label">Rótulo de {{ f.config.max ?? 5 }} (opcional)</span>
-                    <input class="input" [ngModel]="f.config.maxLabel ?? ''" (ngModelChange)="setConfig('maxLabel', $event)" placeholder="Ex.: Concordo" />
+                    <span class="label">Label for {{ f.config.max ?? 5 }} (optional)</span>
+                    <input class="input" [ngModel]="f.config.maxLabel ?? ''" (ngModelChange)="setConfig('maxLabel', $event)" placeholder="e.g. Agree" />
                   </label>
                 </div>
               </div>
@@ -167,7 +167,7 @@ import { EditorField } from './builder-ops';
                       [ngModel]="option.label"
                       (ngModelChange)="updateOption(i, $event)"
                       (keydown.enter)="$event.preventDefault(); addOption(i)"
-                      [attr.aria-label]="'Opção ' + (i + 1)"
+                      [attr.aria-label]="'Option ' + (i + 1)"
                       [attr.data-option-index]="i"
                     />
                     <button
@@ -175,8 +175,8 @@ import { EditorField } from './builder-ops';
                       class="icon-btn h-8 w-8"
                       (click)="removeOption(i)"
                       [disabled]="f.options.length === 1"
-                      title="Remover opção"
-                      aria-label="Remover opção"
+                      title="Remove option"
+                      aria-label="Remove option"
                     >
                       <app-icon name="x" [size]="16" />
                     </button>
@@ -184,18 +184,18 @@ import { EditorField } from './builder-ops';
                 }
               </ul>
               <button type="button" class="btn-ghost mt-1 px-2 text-sm text-brand-700" (click)="addOption(f.options.length - 1)">
-                <app-icon name="plus" [size]="16" /> Adicionar opção
+                <app-icon name="plus" [size]="16" /> Add option
               </button>
               @if (errors()['options']; as msg) { <p class="field-error">{{ msg }}</p> }
 
               @if (f.type === 'CHECKBOX') {
                 <div class="mt-3 grid gap-3 sm:grid-cols-2">
                   <label class="text-sm">
-                    <span class="label">Mínimo de seleções (opcional)</span>
+                    <span class="label">Minimum selections (optional)</span>
                     <input type="number" min="0" class="input" [ngModel]="f.config.minSelected ?? null" (ngModelChange)="setConfig('minSelected', $event)" />
                   </label>
                   <label class="text-sm">
-                    <span class="label">Máximo de seleções (opcional)</span>
+                    <span class="label">Maximum selections (optional)</span>
                     <input type="number" min="1" class="input" [ngModel]="f.config.maxSelected ?? null" (ngModelChange)="setConfig('maxSelected', $event)" />
                   </label>
                 </div>
@@ -207,18 +207,18 @@ import { EditorField } from './builder-ops';
           @if (errors()['type']; as msg) { <p class="field-error">{{ msg }}</p> }
         </div>
 
-        <!-- Rodapé de ações -->
+        <!-- Action footer -->
         <div class="flex flex-wrap items-center justify-end gap-1 border-t border-slate-100 px-4 py-2">
-          <button type="button" class="icon-btn" (click)="move.emit(-1)" [disabled]="index() === 0" title="Mover para cima" aria-label="Mover para cima">
+          <button type="button" class="icon-btn" (click)="move.emit(-1)" [disabled]="index() === 0" title="Move up" aria-label="Move up">
             <app-icon name="chevron-up" [size]="18" />
           </button>
-          <button type="button" class="icon-btn" (click)="move.emit(1)" [disabled]="index() === total() - 1" title="Mover para baixo" aria-label="Mover para baixo">
+          <button type="button" class="icon-btn" (click)="move.emit(1)" [disabled]="index() === total() - 1" title="Move down" aria-label="Move down">
             <app-icon name="chevron-down" [size]="18" />
           </button>
-          <button type="button" class="icon-btn" (click)="duplicate.emit()" title="Duplicar" aria-label="Duplicar">
+          <button type="button" class="icon-btn" (click)="duplicate.emit()" title="Duplicate" aria-label="Duplicate">
             <app-icon name="copy" [size]="18" />
           </button>
-          <button type="button" class="icon-btn hover:text-red-600" (click)="remove.emit()" title="Excluir" aria-label="Excluir">
+          <button type="button" class="icon-btn hover:text-red-600" (click)="remove.emit()" title="Delete" aria-label="Delete">
             <app-icon name="trash" [size]="18" />
           </button>
           @if (typeInfo().isInput) {
@@ -230,7 +230,7 @@ import { EditorField } from './builder-ops';
               [attr.aria-checked]="f.required"
               (click)="patch.emit({ required: !f.required })"
             >
-              Obrigatória
+              Required
               <span class="relative inline-flex h-5 w-9 items-center rounded-full transition" [class.bg-brand-600]="f.required" [class.bg-slate-300]="!f.required">
                 <span class="inline-block h-4 w-4 rounded-full bg-white shadow transition" [class.translate-x-4.5]="f.required" [class.translate-x-0.5]="!f.required"></span>
               </span>
@@ -243,11 +243,11 @@ import { EditorField } from './builder-ops';
     <ng-template #textConfig>
       <div class="grid gap-3 sm:grid-cols-2">
         <label class="text-sm">
-          <span class="label">Texto de exemplo</span>
-          <input class="input" [ngModel]="field().config.placeholder ?? ''" (ngModelChange)="setConfig('placeholder', $event)" placeholder="Sua resposta" />
+          <span class="label">Placeholder text</span>
+          <input class="input" [ngModel]="field().config.placeholder ?? ''" (ngModelChange)="setConfig('placeholder', $event)" placeholder="Your answer" />
         </label>
         <label class="text-sm">
-          <span class="label">Limite de caracteres (opcional)</span>
+          <span class="label">Character limit (optional)</span>
           <input type="number" min="1" class="input" [ngModel]="field().config.maxLength ?? null" (ngModelChange)="setConfig('maxLength', $event)" />
         </label>
       </div>
@@ -261,7 +261,7 @@ export class FieldEditorCardComponent {
   readonly index = input.required<number>();
   readonly total = input.required<number>();
   readonly active = input(false);
-  /** Erros do servidor para este campo, por atributo (label, options, config). */
+  /** Server errors for this field, by attribute (label, options, config). */
   readonly errors = input<Record<string, string>>({});
 
   readonly activate = output<void>();
@@ -299,7 +299,7 @@ export class FieldEditorCardComponent {
 
   protected addOption(afterIndex: number): void {
     const options: FieldOption[] = [...this.field().options];
-    options.splice(afterIndex + 1, 0, { id: null, label: `Opção ${options.length + 1}` });
+    options.splice(afterIndex + 1, 0, { id: null, label: `Option ${options.length + 1}` });
     this.patch.emit({ options });
     this.focusOption(afterIndex + 1);
   }
@@ -308,10 +308,10 @@ export class FieldEditorCardComponent {
     this.patch.emit({ options: this.field().options.filter((_, i) => i !== index) });
   }
 
-  /** Ao focar um texto padrão, seleciona-o para facilitar a substituição. */
+  /** When a default text is focused, select it so it is easy to replace. */
   protected selectDefault(event: FocusEvent): void {
     const target = event.target as HTMLInputElement;
-    if (target.value === 'Pergunta sem título' || target.value === 'Nova seção') {
+    if (target.value === 'Untitled question' || target.value === 'New section') {
       target.select();
     }
   }

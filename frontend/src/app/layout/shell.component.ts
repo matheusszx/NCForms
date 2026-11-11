@@ -5,7 +5,7 @@ import { AuthService } from '../core/auth/auth.service';
 import { IconComponent } from '../shared/ui/icon.component';
 import { LogoComponent } from '../shared/ui/logo.component';
 
-/** Layout da área logada: cabeçalho com logo e usuário. */
+/** Layout of the signed-in area: header with logo and user. */
 @Component({
   selector: 'app-shell',
   imports: [RouterOutlet, RouterLink, IconComponent, LogoComponent],
@@ -13,7 +13,7 @@ import { LogoComponent } from '../shared/ui/logo.component';
   template: `
     <header class="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
       <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
-        <a routerLink="/" aria-label="Início"><app-logo /></a>
+        <a routerLink="/" aria-label="Home"><app-logo /></a>
         @if (auth.user(); as user) {
           <div class="flex items-center gap-3">
             <span class="hidden text-sm text-slate-600 sm:inline">{{ user.name }}</span>
@@ -23,7 +23,7 @@ import { LogoComponent } from '../shared/ui/logo.component';
             >
               {{ user.name.charAt(0).toUpperCase() }}
             </span>
-            <button type="button" class="icon-btn" (click)="auth.logout()" title="Sair" aria-label="Sair">
+            <button type="button" class="icon-btn" (click)="auth.logout()" title="Sign out" aria-label="Sign out">
               <app-icon name="logout" [size]="18" />
             </button>
           </div>

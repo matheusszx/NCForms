@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RenderField, scaleRange, textMaxLength } from './form-controls';
 
-/** Controle de entrada de uma pergunta, conforme o tipo do campo. */
+/** Input control for one question, based on the field type. */
 @Component({
   selector: 'app-field-input',
   imports: [ReactiveFormsModule],
@@ -18,7 +18,7 @@ import { RenderField, scaleRange, textMaxLength } from './form-controls';
           class="input-underline max-w-md"
           [id]="inputId()"
           [formControl]="ctrl"
-          [placeholder]="f.config.placeholder ?? 'Sua resposta'"
+          [placeholder]="f.config.placeholder ?? 'Your answer'"
           [attr.maxlength]="maxLength()"
           [attr.aria-invalid]="invalid()"
           [attr.aria-describedby]="describedBy()"
@@ -30,7 +30,7 @@ import { RenderField, scaleRange, textMaxLength } from './form-controls';
           class="input-underline resize-y"
           [id]="inputId()"
           [formControl]="ctrl"
-          [placeholder]="f.config.placeholder ?? 'Sua resposta'"
+          [placeholder]="f.config.placeholder ?? 'Your answer'"
           [attr.maxlength]="maxLength()"
           [attr.aria-invalid]="invalid()"
           [attr.aria-describedby]="describedBy()"
@@ -43,7 +43,7 @@ import { RenderField, scaleRange, textMaxLength } from './form-controls';
           autocomplete="email"
           [id]="inputId()"
           [formControl]="ctrl"
-          [placeholder]="f.config.placeholder ?? 'nome@exemplo.com'"
+          [placeholder]="f.config.placeholder ?? 'name@example.com'"
           [attr.aria-invalid]="invalid()"
           [attr.aria-describedby]="describedBy()"
         />
@@ -55,7 +55,7 @@ import { RenderField, scaleRange, textMaxLength } from './form-controls';
           class="input-underline max-w-xs"
           [id]="inputId()"
           [formControl]="ctrl"
-          [placeholder]="f.config.placeholder ?? 'Sua resposta'"
+          [placeholder]="f.config.placeholder ?? 'Your answer'"
           [attr.min]="f.config.min ?? null"
           [attr.max]="f.config.max ?? null"
           [attr.aria-invalid]="invalid()"
@@ -106,7 +106,7 @@ import { RenderField, scaleRange, textMaxLength } from './form-controls';
           [attr.aria-invalid]="invalid()"
           [attr.aria-describedby]="describedBy()"
         >
-          <option [ngValue]="null">Escolher</option>
+          <option [ngValue]="null">Choose</option>
           @for (option of f.options; track $index) {
             <option [ngValue]="option.id">{{ option.label }}</option>
           }

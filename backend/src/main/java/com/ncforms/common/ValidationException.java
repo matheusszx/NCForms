@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 
-/** Erro de validação com mensagens por campo (chave = id do campo ou caminho do atributo). */
+/** Validation error with per-field messages (key = field id or attribute path). */
 public class ValidationException extends ApiException {
 
     private final Map<String, String> fieldErrors;

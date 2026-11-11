@@ -16,8 +16,8 @@ import { FieldInputComponent } from './field-input.component';
 import { RenderField, buildFormGroup, collectAnswers, errorMessage, isInputField } from './form-controls';
 
 /**
- * Renderiza um formulário para ser respondido. Usado pelo formulário público e pela
- * pré-visualização do editor, garantindo que ambos exibam exatamente o mesmo resultado.
+ * Renders a form to be filled in. Used by the public form and by the editor preview,
+ * so both show exactly the same result.
  */
 @Component({
   selector: 'app-form-renderer',
@@ -33,7 +33,7 @@ import { RenderField, buildFormGroup, collectAnswers, errorMessage, isInputField
             <p class="mt-3 whitespace-pre-line text-sm text-slate-600">{{ description() }}</p>
           }
           @if (hasRequired()) {
-            <p class="mt-4 border-t border-slate-100 pt-3 text-xs text-red-600">* Indica uma pergunta obrigatória</p>
+            <p class="mt-4 border-t border-slate-100 pt-3 text-xs text-red-600">* Indicates a required question</p>
           }
         </div>
       </section>
@@ -60,7 +60,7 @@ import { RenderField, buildFormGroup, collectAnswers, errorMessage, isInputField
             <h3 [id]="'q-' + field.key + '-label'" class="text-base font-medium text-slate-900">
               <label [attr.for]="'q-' + field.key">{{ field.label }}</label>
               @if (field.required) {
-                <span class="ml-0.5 text-red-600" aria-label="obrigatória">*</span>
+                <span class="ml-0.5 text-red-600" aria-label="required">*</span>
               }
             </h3>
             @if (field.helpText) {
@@ -80,10 +80,10 @@ import { RenderField, buildFormGroup, collectAnswers, errorMessage, isInputField
 
       <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
         <button type="submit" class="btn-primary px-6" [disabled]="submitting()">
-          @if (submitting()) { Enviando… } @else { {{ submitLabel() }} }
+          @if (submitting()) { Submitting… } @else { {{ submitLabel() }} }
         </button>
         @if (hasInputs()) {
-          <button type="button" class="btn-ghost text-brand-700" (click)="reset()">Limpar formulário</button>
+          <button type="button" class="btn-ghost text-brand-700" (click)="reset()">Clear form</button>
         }
       </div>
     </form>
@@ -96,8 +96,8 @@ export class FormRendererComponent {
   readonly description = input<string | null>(null);
   readonly fields = input.required<RenderField[]>();
   readonly submitting = input(false);
-  readonly submitLabel = input('Enviar');
-  /** Erros devolvidos pela API, indexados pela chave do campo. */
+  readonly submitLabel = input('Submit');
+  /** Errors returned by the API, keyed by field key. */
   readonly serverErrors = input<Record<string, string>>({});
 
   readonly submitted = output<Record<string, AnswerValue>>();
@@ -124,7 +124,7 @@ export class FormRendererComponent {
     if ((control.touched || this.attempted()) && control.invalid) {
       return errorMessage(control.errors);
     }
-    // Erro do servidor só vale enquanto o valor não for alterado.
+    // A server error only applies until the value changes.
     return control.pristine ? (this.serverErrors()[field.key] ?? null) : null;
   }
 
@@ -136,7 +136,7 @@ export class FormRendererComponent {
       this.scrollToFirstError();
       return;
     }
-    // Marca como "pristine" para que erros de servidor da próxima tentativa apareçam.
+    // Mark as "pristine" so server errors from the next attempt are shown.
     form.markAsPristine();
     this.submitted.emit(collectAnswers(this.fields(), form.getRawValue()));
   }
@@ -146,7 +146,7 @@ export class FormRendererComponent {
     this.resetCount.update((n) => n + 1);
   }
 
-  /** Rola até o primeiro erro após a renderização (inclusive erros vindos do servidor). */
+  /** Scrolls to the first error after rendering (including errors from the server). */
   scrollToFirstError(): void {
     setTimeout(() => {
       const el = (this.host.nativeElement as HTMLElement).querySelector('[data-invalid="true"]');

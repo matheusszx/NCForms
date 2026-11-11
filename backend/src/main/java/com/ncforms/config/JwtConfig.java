@@ -24,7 +24,7 @@ public class JwtConfig {
     SecretKey jwtSecretKey(AppProperties props) {
         byte[] secret = props.jwt().secret().getBytes(StandardCharsets.UTF_8);
         if (secret.length < MIN_SECRET_BYTES) {
-            throw new IllegalStateException("JWT_SECRET deve ter pelo menos " + MIN_SECRET_BYTES + " caracteres.");
+            throw new IllegalStateException("JWT_SECRET must be at least " + MIN_SECRET_BYTES + " characters long.");
         }
         return new SecretKeySpec(secret, "HmacSHA256");
     }

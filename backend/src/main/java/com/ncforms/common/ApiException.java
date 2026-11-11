@@ -2,7 +2,7 @@ package com.ncforms.common;
 
 import org.springframework.http.HttpStatus;
 
-/** Exceção de negócio convertida em resposta HTTP pelo {@link GlobalExceptionHandler}. */
+/** Business exception converted into an HTTP response by {@link GlobalExceptionHandler}. */
 public class ApiException extends RuntimeException {
 
     private final HttpStatus status;

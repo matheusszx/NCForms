@@ -6,18 +6,18 @@ export interface ApiError {
   fieldErrors: Record<string, string>;
 }
 
-/** Converte qualquer erro HTTP no formato padronizado retornado pelo backend. */
+/** Converts any HTTP error into the standard shape returned by the backend. */
 export function toApiError(error: unknown): ApiError {
   if (error instanceof HttpErrorResponse) {
     const body = error.error as Partial<ApiError> | null;
     if (error.status === 0) {
-      return { status: 0, message: 'Não foi possível conectar ao servidor.', fieldErrors: {} };
+      return { status: 0, message: 'Could not connect to the server.', fieldErrors: {} };
     }
     return {
       status: error.status,
-      message: body?.message ?? 'Ocorreu um erro inesperado.',
+      message: body?.message ?? 'An unexpected error occurred.',
       fieldErrors: body?.fieldErrors ?? {},
     };
   }
-  return { status: -1, message: 'Ocorreu um erro inesperado.', fieldErrors: {} };
+  return { status: -1, message: 'An unexpected error occurred.', fieldErrors: {} };
 }

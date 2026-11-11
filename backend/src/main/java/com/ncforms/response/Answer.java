@@ -18,8 +18,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * Resposta a um campo. {@code value} guarda texto, número, data ISO,
- * id de opção (RADIO/DROPDOWN) ou array de ids de opção (CHECKBOX).
+ * Answer to one field. {@code value} holds text, a number, an ISO date,
+ * an option id (RADIO/DROPDOWN) or an array of option ids (CHECKBOX).
  */
 @Entity
 @Table(name = "answers")

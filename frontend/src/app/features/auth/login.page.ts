@@ -12,32 +12,32 @@ import { AuthLayoutComponent } from './auth-layout.component';
   imports: [ReactiveFormsModule, RouterLink, AuthLayoutComponent, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-auth-layout heading="Entrar" subheading="Acesse para criar e gerenciar seus formulários.">
+    <app-auth-layout heading="Sign in" subheading="Sign in to create and manage your forms.">
       @if (expired()) {
         <div class="mb-4 flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
-          <app-icon name="info" [size]="16" /> Sua sessão expirou. Entre novamente.
+          <app-icon name="info" [size]="16" /> Your session has expired. Please sign in again.
         </div>
       }
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4" novalidate>
         <div>
-          <label class="label" for="email">E-mail</label>
+          <label class="label" for="email">Email</label>
           <input id="email" type="email" class="input" formControlName="email" autocomplete="email" />
         </div>
         <div>
-          <label class="label" for="password">Senha</label>
+          <label class="label" for="password">Password</label>
           <input id="password" type="password" class="input" formControlName="password" autocomplete="current-password" />
         </div>
         @if (error()) {
           <p class="field-error" role="alert"><app-icon name="alert" [size]="16" />{{ error() }}</p>
         }
         <button type="submit" class="btn-primary w-full" [disabled]="loading()">
-          {{ loading() ? 'Entrando…' : 'Entrar' }}
+          {{ loading() ? 'Signing in…' : 'Sign in' }}
         </button>
       </form>
       @if (registrationEnabled()) {
         <p class="mt-6 text-center text-sm text-slate-600">
-          Não tem conta?
-          <a routerLink="/register" class="font-medium text-brand-700 hover:underline">Criar conta</a>
+          Don't have an account?
+          <a routerLink="/register" class="font-medium text-brand-700 hover:underline">Create account</a>
         </p>
       }
     </app-auth-layout>
@@ -47,7 +47,7 @@ export class LoginPage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  /** Query params ligados via withComponentInputBinding. */
+  /** Query params bound via withComponentInputBinding. */
   readonly returnUrl = input<string>();
   readonly expired = input<string>();
 
@@ -69,7 +69,7 @@ export class LoginPage implements OnInit {
 
   protected submit(): void {
     if (this.form.invalid) {
-      this.error.set('Informe e-mail e senha.');
+      this.error.set('Enter your email and password.');
       return;
     }
     this.loading.set(true);
@@ -85,7 +85,7 @@ export class LoginPage implements OnInit {
   }
 }
 
-/** Aceita apenas caminhos internos para evitar redirecionamento aberto. */
+/** Only accepts internal paths to prevent open redirects. */
 export function safeReturnUrl(url: string | undefined): string {
   return url && url.startsWith('/') && !url.startsWith('//') ? url : '/';
 }

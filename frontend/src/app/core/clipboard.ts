@@ -1,6 +1,6 @@
 /**
- * Copia texto para a área de transferência. A Clipboard API só existe em contexto
- * seguro (HTTPS/localhost); em servidores HTTP usa o fallback com execCommand.
+ * Copies text to the clipboard. The Clipboard API only exists in a secure context
+ * (HTTPS/localhost); on plain HTTP servers it falls back to execCommand.
  */
 export async function copyToClipboard(text: string): Promise<boolean> {
   if (navigator.clipboard && window.isSecureContext) {
@@ -8,7 +8,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
       await navigator.clipboard.writeText(text);
       return true;
     } catch {
-      // tenta o fallback
+      // try the fallback
     }
   }
   const textarea = document.createElement('textarea');

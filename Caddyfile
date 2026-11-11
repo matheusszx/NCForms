@@ -1,0 +1,4 @@
+# Caddy obtains and renews the TLS certificate for APP_DOMAIN automatically (Let's Encrypt).
+{$APP_DOMAIN} {
+	reverse_proxy frontend:80
+}

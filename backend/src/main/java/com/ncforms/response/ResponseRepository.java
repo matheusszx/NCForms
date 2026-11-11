@@ -23,7 +23,7 @@ public interface ResponseRepository extends JpaRepository<Response, UUID> {
     @Query("select r.formId as formId, count(r) as total from Response r where r.formId in :formIds group by r.formId")
     List<FormResponseCount> countByFormIds(@Param("formIds") Collection<UUID> formIds);
 
-    /** Quantidade de respostas enviadas antes da informada (ordem cronológica, desempate por id). */
+    /** Number of responses submitted before the given one (chronological order, ties broken by id). */
     @Query(value = """
             select count(*) from responses
             where form_id = :formId and (submitted_at, id) < (:submittedAt, :id)

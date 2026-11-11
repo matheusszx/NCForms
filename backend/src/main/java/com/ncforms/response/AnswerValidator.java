@@ -23,15 +23,15 @@ import com.ncforms.form.FieldConfig;
 import com.ncforms.form.FormField;
 
 /**
- * Valida as respostas enviadas contra a definição atual do formulário e devolve
- * os valores normalizados que serão gravados. Erros são indexados pelo id do campo.
+ * Validates submitted answers against the current form definition and returns
+ * the normalized values to be stored. Errors are keyed by field id.
  */
 @Component
 public class AnswerValidator {
 
-    static final String REQUIRED = "Esta pergunta é obrigatória.";
-    static final String INVALID = "Resposta inválida.";
-    static final String INVALID_OPTION = "Opção inválida.";
+    static final String REQUIRED = "This question is required.";
+    static final String INVALID = "Invalid answer.";
+    static final String INVALID_OPTION = "Invalid option.";
 
     private static final Pattern EMAIL = Pattern.compile("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     private static final int MAX_EMAIL_LENGTH = 255;
@@ -62,7 +62,7 @@ public class AnswerValidator {
         }
 
         if (!errors.isEmpty()) {
-            throw new ValidationException("Algumas respostas precisam de atenção.", errors);
+            throw new ValidationException("Some answers need attention.", errors);
         }
         return result;
     }
@@ -74,14 +74,14 @@ public class AnswerValidator {
                 String text = requireText(value).trim();
                 int max = FieldConfig.textMaxLength(field.getType(), config);
                 if (text.length() > max) {
-                    throw new InvalidAnswerException("A resposta deve ter no máximo " + max + " caracteres.");
+                    throw new InvalidAnswerException("The answer must be at most " + max + " characters.");
                 }
                 yield JSON.stringNode(text);
             }
             case EMAIL -> {
                 String email = requireText(value).trim();
                 if (email.length() > MAX_EMAIL_LENGTH || !EMAIL.matcher(email).matches()) {
-                    throw new InvalidAnswerException("Informe um e-mail válido.");
+                    throw new InvalidAnswerException("Enter a valid email address.");
                 }
                 yield JSON.stringNode(email);
             }
@@ -90,7 +90,7 @@ public class AnswerValidator {
                 try {
                     yield JSON.stringNode(LocalDate.parse(requireText(value).trim()).toString());
                 } catch (DateTimeParseException e) {
-                    throw new InvalidAnswerException("Informe uma data válida.");
+                    throw new InvalidAnswerException("Enter a valid date.");
                 }
             }
             case RADIO, DROPDOWN -> {
@@ -108,14 +108,14 @@ public class AnswerValidator {
 
     private BigDecimal validateNumber(JsonNode value, Map<String, Object> config) {
         BigDecimal number = toDecimal(value)
-                .orElseThrow(() -> new InvalidAnswerException("Informe um número válido."));
+                .orElseThrow(() -> new InvalidAnswerException("Enter a valid number."));
         Optional<BigDecimal> min = FieldConfig.decimal(config, FieldConfig.MIN);
         Optional<BigDecimal> max = FieldConfig.decimal(config, FieldConfig.MAX);
         if (min.isPresent() && number.compareTo(min.get()) < 0) {
-            throw new InvalidAnswerException("O valor deve ser no mínimo " + min.get().toPlainString() + ".");
+            throw new InvalidAnswerException("The value must be at least " + min.get().toPlainString() + ".");
         }
         if (max.isPresent() && number.compareTo(max.get()) > 0) {
-            throw new InvalidAnswerException("O valor deve ser no máximo " + max.get().toPlainString() + ".");
+            throw new InvalidAnswerException("The value must be at most " + max.get().toPlainString() + ".");
         }
         BigDecimal stripped = number.stripTrailingZeros();
         return stripped.scale() < 0 ? stripped.setScale(0) : stripped;
@@ -136,10 +136,10 @@ public class AnswerValidator {
         Optional<Integer> min = FieldConfig.integer(config, FieldConfig.MIN_SELECTED);
         Optional<Integer> max = FieldConfig.integer(config, FieldConfig.MAX_SELECTED);
         if (min.isPresent() && selected.size() < min.get()) {
-            throw new InvalidAnswerException("Selecione pelo menos " + min.get() + " " + plural(min.get()) + ".");
+            throw new InvalidAnswerException("Select at least " + min.get() + " " + plural(min.get()) + ".");
         }
         if (max.isPresent() && selected.size() > max.get()) {
-            throw new InvalidAnswerException("Selecione no máximo " + max.get() + " " + plural(max.get()) + ".");
+            throw new InvalidAnswerException("Select at most " + max.get() + " " + plural(max.get()) + ".");
         }
         ArrayNode array = JSON.arrayNode();
         selected.forEach(array::add);
@@ -152,7 +152,7 @@ public class AnswerValidator {
         BigDecimal number = toDecimal(value).orElse(null);
         if (number == null || number.stripTrailingZeros().scale() > 0
                 || number.compareTo(BigDecimal.valueOf(min)) < 0 || number.compareTo(BigDecimal.valueOf(max)) > 0) {
-            throw new InvalidAnswerException("Escolha um valor entre " + min + " e " + max + ".");
+            throw new InvalidAnswerException("Choose a value between " + min + " and " + max + ".");
         }
         return number.intValueExact();
     }
@@ -192,7 +192,7 @@ public class AnswerValidator {
     }
 
     private static String plural(int count) {
-        return count == 1 ? "opção" : "opções";
+        return count == 1 ? "option" : "options";
     }
 
     private static final class InvalidAnswerException extends RuntimeException {

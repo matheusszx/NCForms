@@ -12,12 +12,12 @@ public enum FieldType {
     DROPDOWN,
     LINEAR_SCALE;
 
-    /** Campos que recebem resposta do usuário (SECTION_TITLE é apenas visual). */
+    /** Fields that receive an answer from the user (SECTION_TITLE is visual only). */
     public boolean isInput() {
         return this != SECTION_TITLE;
     }
 
-    /** Campos cujas respostas referenciam opções cadastradas. */
+    /** Fields whose answers reference defined options. */
     public boolean hasOptions() {
         return this == RADIO || this == CHECKBOX || this == DROPDOWN;
     }

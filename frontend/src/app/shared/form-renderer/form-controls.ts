@@ -3,13 +3,13 @@ import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn 
 import { SCALE_DEFAULT_MAX, SCALE_DEFAULT_MIN, fieldTypeInfo } from '../../core/field-types';
 import { AnswerValue, FormField } from '../../core/models';
 
-/** Campo pronto para renderização; `key` identifica o controle e a resposta enviada (id do campo). */
+/** Field ready for rendering; `key` identifies the control and the submitted answer (field id). */
 export type RenderField = FormField & { key: string };
 
 export const DEFAULT_SHORT_TEXT_MAX_LENGTH = 500;
 export const DEFAULT_LONG_TEXT_MAX_LENGTH = 10000;
 
-// Mesmo critério do backend (AnswerValidator).
+// Same rule as the backend (AnswerValidator).
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function isInputField(field: FormField): boolean {
@@ -33,7 +33,7 @@ export function textMaxLength(field: FormField): number {
   );
 }
 
-/** Cria o FormGroup com um controle por pergunta e os validadores equivalentes aos do backend. */
+/** Builds the FormGroup with one control per question and validators matching the backend's. */
 export function buildFormGroup(fields: RenderField[]): FormGroup<Record<string, FormControl>> {
   const controls: Record<string, FormControl> = {};
   for (const field of fields) {
@@ -111,7 +111,7 @@ function selectionLimits(min: number | undefined, max: number | undefined): Vali
   return (control) => {
     const selected = Array.isArray(control.value) ? control.value.length : 0;
     if (selected === 0) {
-      return null; // "obrigatório" é tratado por requiredValue
+      return null; // "required" is handled by requiredValue
     }
     if (min !== undefined && selected < min) {
       return { minSelected: min };
@@ -128,33 +128,33 @@ export function errorMessage(errors: ValidationErrors | null): string | null {
     return null;
   }
   if (errors['required']) {
-    return 'Esta pergunta é obrigatória.';
+    return 'This question is required.';
   }
   if (errors['email']) {
-    return 'Informe um e-mail válido.';
+    return 'Enter a valid email address.';
   }
   if (errors['number']) {
-    return 'Informe um número válido.';
+    return 'Enter a valid number.';
   }
   if (errors['min']) {
-    return `O valor deve ser no mínimo ${errors['min'].min}.`;
+    return `The value must be at least ${errors['min'].min}.`;
   }
   if (errors['max']) {
-    return `O valor deve ser no máximo ${errors['max'].max}.`;
+    return `The value must be at most ${errors['max'].max}.`;
   }
   if (errors['maxlength']) {
-    return `A resposta deve ter no máximo ${errors['maxlength'].max} caracteres.`;
+    return `The answer must be at most ${errors['maxlength'].max} characters.`;
   }
   if (errors['minSelected']) {
-    return `Selecione pelo menos ${errors['minSelected']} ${errors['minSelected'] === 1 ? 'opção' : 'opções'}.`;
+    return `Select at least ${errors['minSelected']} ${errors['minSelected'] === 1 ? 'option' : 'options'}.`;
   }
   if (errors['maxSelected']) {
-    return `Selecione no máximo ${errors['maxSelected']} ${errors['maxSelected'] === 1 ? 'opção' : 'opções'}.`;
+    return `Select at most ${errors['maxSelected']} ${errors['maxSelected'] === 1 ? 'option' : 'options'}.`;
   }
-  return 'Resposta inválida.';
+  return 'Invalid answer.';
 }
 
-/** Monta o payload enviado à API, omitindo perguntas não respondidas. */
+/** Builds the payload sent to the API, omitting unanswered questions. */
 export function collectAnswers(fields: RenderField[], values: Record<string, unknown>): Record<string, AnswerValue> {
   const answers: Record<string, AnswerValue> = {};
   for (const field of fields) {

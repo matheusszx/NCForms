@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.security.oauth2.jwt.Jwt;
 
-/** Extrai o id do usuário autenticado (claim {@code sub}) do JWT. */
+/** Extracts the authenticated user's id (claim {@code sub}) from the JWT. */
 public final class CurrentUser {
 
     private CurrentUser() {

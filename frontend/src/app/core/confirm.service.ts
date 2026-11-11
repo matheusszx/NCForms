@@ -11,7 +11,7 @@ interface PendingConfirm extends ConfirmOptions {
   resolve: (confirmed: boolean) => void;
 }
 
-/** Diálogo de confirmação modal (renderizado por ConfirmDialogComponent na raiz). */
+/** Modal confirmation dialog (rendered by ConfirmDialogComponent at the root). */
 @Injectable({ providedIn: 'root' })
 export class ConfirmService {
   readonly pending = signal<PendingConfirm | null>(null);

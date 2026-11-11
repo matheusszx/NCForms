@@ -5,7 +5,7 @@ import java.util.function.Predicate;
 
 import org.springframework.stereotype.Component;
 
-/** Gera identificadores curtos e não sequenciais para os links públicos. */
+/** Generates short, non-sequential identifiers for public links. */
 @Component
 public class SlugGenerator {
 
@@ -22,7 +22,7 @@ public class SlugGenerator {
                 return slug;
             }
         }
-        throw new IllegalStateException("Não foi possível gerar um link único.");
+        throw new IllegalStateException("Could not generate a unique link.");
     }
 
     private String randomSlug() {

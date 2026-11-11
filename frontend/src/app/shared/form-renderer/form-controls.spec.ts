@@ -6,13 +6,13 @@ function field(type: FieldType, key: string, extra: Partial<RenderField> = {}): 
 }
 
 describe('form-controls', () => {
-  it('cria controles apenas para perguntas (não para títulos de seção)', () => {
+  it('creates controls only for questions (not for section titles)', () => {
     const group = buildFormGroup([field('SECTION_TITLE', 's'), field('SHORT_TEXT', 'a'), field('CHECKBOX', 'b')]);
     expect(Object.keys(group.controls)).toEqual(['a', 'b']);
     expect(group.controls['b'].value).toEqual([]);
   });
 
-  it('campos obrigatórios rejeitam vazio, espaços e lista vazia', () => {
+  it('required fields reject empty values, whitespace and empty lists', () => {
     const group = buildFormGroup([
       field('SHORT_TEXT', 'text', { required: true }),
       field('CHECKBOX', 'check', { required: true }),
@@ -30,7 +30,7 @@ describe('form-controls', () => {
     expect(group.valid).toBe(true);
   });
 
-  it('valida e-mail, faixa numérica, tamanho de texto e limites de seleção', () => {
+  it('validates email, number range, text length and selection limits', () => {
     const group = buildFormGroup([
       field('EMAIL', 'email'),
       field('NUMBER', 'age', { config: { min: 18, max: 99 } }),
@@ -39,28 +39,28 @@ describe('form-controls', () => {
     ]);
     const c = group.controls;
 
-    c['email'].setValue('invalido');
-    expect(errorMessage(c['email'].errors)).toBe('Informe um e-mail válido.');
+    c['email'].setValue('invalid');
+    expect(errorMessage(c['email'].errors)).toBe('Enter a valid email address.');
     c['email'].setValue('a@b.co');
     expect(c['email'].valid).toBe(true);
 
     c['age'].setValue(10);
-    expect(errorMessage(c['age'].errors)).toBe('O valor deve ser no mínimo 18.');
+    expect(errorMessage(c['age'].errors)).toBe('The value must be at least 18.');
     c['age'].setValue(120);
-    expect(errorMessage(c['age'].errors)).toBe('O valor deve ser no máximo 99.');
+    expect(errorMessage(c['age'].errors)).toBe('The value must be at most 99.');
 
     c['nick'].setValue('abcd');
-    expect(errorMessage(c['nick'].errors)).toBe('A resposta deve ter no máximo 3 caracteres.');
+    expect(errorMessage(c['nick'].errors)).toBe('The answer must be at most 3 characters.');
 
     c['fruits'].setValue(['a']);
-    expect(errorMessage(c['fruits'].errors)).toBe('Selecione pelo menos 2 opções.');
+    expect(errorMessage(c['fruits'].errors)).toBe('Select at least 2 options.');
     c['fruits'].setValue(['a', 'b', 'c', 'd']);
-    expect(errorMessage(c['fruits'].errors)).toBe('Selecione no máximo 3 opções.');
+    expect(errorMessage(c['fruits'].errors)).toBe('Select at most 3 options.');
     c['fruits'].setValue([]);
-    expect(c['fruits'].valid).toBe(true); // opcional: vazio é aceito
+    expect(c['fruits'].valid).toBe(true); // optional: empty is accepted
   });
 
-  it('collectAnswers monta o payload e omite respostas vazias', () => {
+  it('collectAnswers builds the payload and omits empty answers', () => {
     const fields = [
       field('SECTION_TITLE', 's'),
       field('SHORT_TEXT', 'name'),
@@ -79,7 +79,7 @@ describe('form-controls', () => {
     expect(answers).toEqual({ name: 'Ana', age: 30, tags: ['x', 'y'], score: 4 });
   });
 
-  it('scaleRange usa limites configurados ou 1–5', () => {
+  it('scaleRange uses configured limits or 1–5', () => {
     expect(scaleRange(field('LINEAR_SCALE', 'a'))).toEqual([1, 2, 3, 4, 5]);
     expect(scaleRange(field('LINEAR_SCALE', 'b', { config: { min: 0, max: 3 } }))).toEqual([0, 1, 2, 3]);
   });

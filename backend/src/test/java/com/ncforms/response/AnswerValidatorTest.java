@@ -67,8 +67,8 @@ class AnswerValidatorTest {
     void invalidEmailIsRejected() {
         FormField email = field(FieldType.EMAIL, true);
 
-        assertThat(errorsOf(List.of(email), Map.of(key(email), JSON.stringNode("nao-e-email"))))
-                .containsEntry(key(email), "Informe um e-mail válido.");
+        assertThat(errorsOf(List.of(email), Map.of(key(email), JSON.stringNode("not-an-email"))))
+                .containsEntry(key(email), "Enter a valid email address.");
         assertThat(validator.validate(List.of(email), Map.of(key(email), JSON.stringNode("a@b.com"))))
                 .containsKey(email.getId());
     }
@@ -79,9 +79,9 @@ class AnswerValidatorTest {
         age.setConfig(Map.of("min", 18, "max", 99));
 
         assertThat(errorsOf(List.of(age), Map.of(key(age), JSON.numberNode(10))))
-                .containsEntry(key(age), "O valor deve ser no mínimo 18.");
+                .containsEntry(key(age), "The value must be at least 18.");
         assertThat(errorsOf(List.of(age), Map.of(key(age), JSON.stringNode("abc"))))
-                .containsEntry(key(age), "Informe um número válido.");
+                .containsEntry(key(age), "Enter a valid number.");
 
         JsonNode stored = validator.validate(List.of(age), Map.of(key(age), JSON.stringNode("30,50"))).get(age.getId());
         assertThat(stored.decimalValue()).isEqualByComparingTo("30.5");
@@ -92,14 +92,14 @@ class AnswerValidatorTest {
         FormField date = field(FieldType.DATE, false);
 
         assertThat(errorsOf(List.of(date), Map.of(key(date), JSON.stringNode("31/02/2024"))))
-                .containsEntry(key(date), "Informe uma data válida.");
+                .containsEntry(key(date), "Enter a valid date.");
         assertThat(validator.validate(List.of(date), Map.of(key(date), JSON.stringNode("2024-02-29"))))
                 .containsKey(date.getId());
     }
 
     @Test
     void radioMustReferenceAnOptionOfTheField() {
-        FormField radio = field(FieldType.RADIO, true, "Sim", "Não");
+        FormField radio = field(FieldType.RADIO, true, "Yes", "No");
 
         assertThat(errorsOf(List.of(radio), Map.of(key(radio), JSON.stringNode(UUID.randomUUID().toString()))))
                 .containsEntry(key(radio), AnswerValidator.INVALID_OPTION);
@@ -127,9 +127,9 @@ class AnswerValidatorTest {
         String c = optionId(checkbox, 2);
 
         assertThat(errorsOf(List.of(checkbox), Map.of(key(checkbox), JSON.arrayNode().add(a))))
-                .containsEntry(key(checkbox), "Selecione pelo menos 2 opções.");
+                .containsEntry(key(checkbox), "Select at least 2 options.");
         assertThat(errorsOf(List.of(checkbox), Map.of(key(checkbox), JSON.arrayNode().add(a).add(b).add(c))))
-                .containsEntry(key(checkbox), "Selecione no máximo 2 opções.");
+                .containsEntry(key(checkbox), "Select at most 2 options.");
         assertThat(errorsOf(List.of(checkbox), Map.of(key(checkbox), JSON.stringNode(a))))
                 .containsEntry(key(checkbox), AnswerValidator.INVALID);
 
@@ -169,7 +169,7 @@ class AnswerValidatorTest {
     private Map<String, String> errorsOf(List<FormField> fields, Map<String, JsonNode> answers) {
         ValidationException ex = catchThrowableOfType(ValidationException.class,
                 () -> validator.validate(fields, answers));
-        assertThat(ex).as("esperava ValidationException").isNotNull();
+        assertThat(ex).as("expected ValidationException").isNotNull();
         return ex.getFieldErrors();
     }
 

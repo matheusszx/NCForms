@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 
-/** Chaves e leitura tipada do JSON de configuração de um campo. */
+/** Keys and typed access for a field's configuration JSON. */
 public final class FieldConfig {
 
     public static final String PLACEHOLDER = "placeholder";

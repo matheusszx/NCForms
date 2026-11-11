@@ -22,7 +22,7 @@ export class AuthService {
 
   readonly user = computed(() => this.session()?.user ?? null);
 
-  /** Token válido (não expirado) ou null. Sessões expiradas são descartadas. */
+  /** Valid (non-expired) token or null. Expired sessions are discarded. */
   token(): string | null {
     const session = this.session();
     if (!session) {
@@ -62,7 +62,7 @@ export class AuthService {
     void this.router.navigate(['/login']);
   }
 
-  /** Chamado quando a API responde 401: encerra a sessão e volta ao login. */
+  /** Called when the API responds 401: ends the session and returns to login. */
   handleUnauthorized(): void {
     if (!this.session()) {
       return;
@@ -77,7 +77,7 @@ export class AuthService {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
     } catch {
-      // Armazenamento indisponível (modo privado): mantém a sessão só em memória.
+      // Storage unavailable (private mode): keep the session in memory only.
     }
   }
 
@@ -86,7 +86,7 @@ export class AuthService {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {
-      // ignora
+      // ignore
     }
   }
 }

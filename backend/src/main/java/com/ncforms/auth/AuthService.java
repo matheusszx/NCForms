@@ -39,11 +39,11 @@ public class AuthService {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (!props.registrationEnabled()) {
-            throw ApiException.forbidden("O cadastro de novos usuários está desativado.");
+            throw ApiException.forbidden("New user registration is disabled.");
         }
         String email = normalizeEmail(request.email());
         if (users.existsByEmail(email)) {
-            throw ApiException.conflict("Já existe uma conta com este e-mail.");
+            throw ApiException.conflict("An account with this email already exists.");
         }
         User user = users.save(new User(request.name().trim(), email, passwordEncoder.encode(request.password())));
         return issueToken(user);
@@ -53,7 +53,7 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         User user = users.findByEmail(normalizeEmail(request.email()))
                 .filter(u -> passwordEncoder.matches(request.password(), u.getPasswordHash()))
-                .orElseThrow(() -> ApiException.unauthorized("E-mail ou senha inválidos."));
+                .orElseThrow(() -> ApiException.unauthorized("Invalid email or password."));
         return issueToken(user);
     }
 
@@ -61,7 +61,7 @@ public class AuthService {
     public UserDto me(UUID userId) {
         return users.findById(userId)
                 .map(UserDto::from)
-                .orElseThrow(() -> ApiException.unauthorized("Sessão inválida."));
+                .orElseThrow(() -> ApiException.unauthorized("Invalid session."));
     }
 
     private AuthResponse issueToken(User user) {

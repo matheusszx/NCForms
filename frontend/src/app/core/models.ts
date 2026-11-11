@@ -23,13 +23,13 @@ export interface FieldConfig {
   maxLabel?: string;
 }
 
-/** Opção de escolha. `id` nulo = opção ainda não salva. */
+/** Choice option. Null `id` = option not saved yet. */
 export interface FieldOption {
   id: string | null;
   label: string;
 }
 
-/** Campo do formulário. `id` nulo = campo ainda não salvo. */
+/** Form field. Null `id` = field not saved yet. */
 export interface FormField {
   id: string | null;
   type: FieldType;
@@ -75,7 +75,7 @@ export interface PublicForm {
   fields: FormField[];
 }
 
-/** Valor enviado por campo: texto, número ou lista de ids de opção (checkbox). */
+/** Value sent per field: text, number or list of option ids (checkbox). */
 export type AnswerValue = string | number | string[];
 
 export interface Page<T> {

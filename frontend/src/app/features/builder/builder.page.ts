@@ -62,16 +62,16 @@ type Mode = 'edit' | 'preview';
     '(document:click)': 'addMenuOpen.set(false)',
   },
   template: `
-    <!-- Barra de ferramentas -->
+    <!-- Toolbar -->
     <div class="sticky top-14 z-20 border-b border-slate-200 bg-white">
       <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-2 px-4 py-2">
-        <a routerLink="/" class="icon-btn" title="Voltar" aria-label="Voltar para meus formulários">
+        <a routerLink="/" class="icon-btn" title="Back" aria-label="Back to my forms">
           <app-icon name="arrow-left" [size]="18" />
         </a>
         <div class="min-w-0 flex-1">
-          <p class="truncate text-sm font-medium text-slate-900">{{ title() || 'Formulário sem título' }}</p>
+          <p class="truncate text-sm font-medium text-slate-900">{{ title() || 'Untitled form' }}</p>
           <p class="text-xs text-slate-500">
-            @if (saving()) { Salvando… } @else if (dirty()) { Alterações não salvas } @else if (loaded()) { Todas as alterações foram salvas }
+            @if (saving()) { Saving… } @else if (dirty()) { Unsaved changes } @else if (loaded()) { All changes saved }
           </p>
         </div>
 
@@ -83,12 +83,12 @@ type Mode = 'edit' | 'preview';
           <button type="button" role="tab" class="rounded-md px-3 py-1.5 transition" [attr.aria-selected]="mode() === 'edit'"
                   [class]="mode() === 'edit' ? 'bg-white font-medium text-slate-900 shadow-sm' : 'text-slate-600'"
                   (click)="mode.set('edit')">
-            Editar
+            Edit
           </button>
           <button type="button" role="tab" class="flex items-center gap-1 rounded-md px-3 py-1.5 transition" [attr.aria-selected]="mode() === 'preview'"
                   [class]="mode() === 'preview' ? 'bg-white font-medium text-slate-900 shadow-sm' : 'text-slate-600'"
                   (click)="mode.set('preview')">
-            <app-icon name="eye" [size]="16" /> Visualizar
+            <app-icon name="eye" [size]="16" /> Preview
           </button>
         </div>
 
@@ -98,20 +98,20 @@ type Mode = 'edit' | 'preview';
           </a>
         }
         @if (status() === 'PUBLISHED') {
-          <button type="button" class="btn-secondary" (click)="copyLink()" title="Copiar link público">
-            <app-icon name="link" [size]="16" /> <span class="hidden sm:inline">Copiar link</span>
+          <button type="button" class="btn-secondary" (click)="copyLink()" title="Copy public link">
+            <app-icon name="link" [size]="16" /> <span class="hidden sm:inline">Copy link</span>
           </button>
         }
         <button type="button" class="btn-secondary" (click)="save()" [disabled]="saving() || !loaded()">
-          <app-icon name="save" [size]="16" /> Salvar
+          <app-icon name="save" [size]="16" /> Save
         </button>
         @if (status() === 'PUBLISHED') {
           <button type="button" class="btn-secondary" (click)="closeForm()" [disabled]="saving()">
-            <app-icon name="pause" [size]="16" /> <span class="hidden sm:inline">Fechar</span>
+            <app-icon name="pause" [size]="16" /> <span class="hidden sm:inline">Close</span>
           </button>
         } @else {
           <button type="button" class="btn-primary" (click)="publish()" [disabled]="saving() || !loaded()">
-            <app-icon name="send" [size]="16" /> {{ status() === 'CLOSED' ? 'Reabrir' : 'Publicar' }}
+            <app-icon name="send" [size]="16" /> {{ status() === 'CLOSED' ? 'Reopen' : 'Publish' }}
           </button>
         }
       </div>
@@ -121,16 +121,16 @@ type Mode = 'edit' | 'preview';
       @if (loadError()) {
         <div class="card p-8 text-center">
           <p class="text-sm text-slate-600">{{ loadError() }}</p>
-          <a routerLink="/" class="btn-secondary mt-4">Voltar</a>
+          <a routerLink="/" class="btn-secondary mt-4">Back</a>
         </div>
       } @else if (!loaded()) {
         <div class="card h-40 animate-pulse bg-slate-100"></div>
       } @else if (mode() === 'preview') {
         <div class="mb-4 flex items-center gap-2 rounded-lg bg-brand-50 px-4 py-2 text-sm text-brand-800">
-          <app-icon name="eye" [size]="16" /> Pré-visualização — é assim que os respondentes verão o formulário.
+          <app-icon name="eye" [size]="16" /> Preview — this is how respondents will see the form.
         </div>
         <app-form-renderer
-          [title]="title() || 'Formulário sem título'"
+          [title]="title() || 'Untitled form'"
           [description]="description() || null"
           [fields]="previewFields()"
           (submitted)="onPreviewSubmit($event)"
@@ -140,13 +140,13 @@ type Mode = 'edit' | 'preview';
           <div class="mb-4 flex items-start gap-2 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
             <app-icon name="info" [size]="18" />
             <span>
-              Este formulário já tem {{ responseCount() | i18nPlural: responsePlural }}. Perguntas excluídas ou com tipo
-              alterado ficam arquivadas e continuam visíveis nas respostas antigas.
+              This form already has {{ responseCount() | i18nPlural: responsePlural }}. Questions that are deleted or change
+              type are archived and remain visible in older responses.
             </span>
           </div>
         }
 
-        <!-- Cabeçalho do formulário -->
+        <!-- Form header -->
         <section class="card overflow-hidden" (click)="activeIndex.set(-1)">
           <div class="h-2.5 bg-brand-600"></div>
           <div class="space-y-3 p-6">
@@ -155,8 +155,8 @@ type Mode = 'edit' | 'preview';
               [class.border-red-400]="titleError()"
               [ngModel]="title()"
               (ngModelChange)="title.set($event); markDirty()"
-              placeholder="Título do formulário"
-              aria-label="Título do formulário"
+              placeholder="Form title"
+              aria-label="Form title"
               maxlength="200"
             />
             @if (titleError(); as msg) { <p class="field-error">{{ msg }}</p> }
@@ -165,13 +165,13 @@ type Mode = 'edit' | 'preview';
               class="input-underline resize-y text-sm"
               [ngModel]="description()"
               (ngModelChange)="description.set($event); markDirty()"
-              placeholder="Descrição do formulário (opcional)"
-              aria-label="Descrição do formulário"
+              placeholder="Form description (optional)"
+              aria-label="Form description"
             ></textarea>
           </div>
         </section>
 
-        <!-- Campos -->
+        <!-- Fields -->
         <div
           cdkDropList
           cdkDropListLockAxis="y"
@@ -198,16 +198,16 @@ type Mode = 'edit' | 'preview';
           } @empty {
             <div class="card flex flex-col items-center p-10 text-center text-sm text-slate-500">
               <app-icon name="file" [size]="28" class="text-slate-300" />
-              <p class="mt-3">Seu formulário ainda não tem perguntas.</p>
-              <p>Use o botão abaixo para adicionar a primeira.</p>
+              <p class="mt-3">Your form doesn't have any questions yet.</p>
+              <p>Use the button below to add the first one.</p>
             </div>
           }
         </div>
 
-        <!-- Adicionar campo -->
+        <!-- Add field -->
         <div class="relative mt-4 flex justify-center">
           <button type="button" class="btn-primary rounded-full px-5 shadow-md" (click)="toggleAddMenu($event)" [attr.aria-expanded]="addMenuOpen()">
-            <app-icon name="plus" [size]="18" /> Adicionar pergunta
+            <app-icon name="plus" [size]="18" /> Add question
           </button>
           @if (addMenuOpen()) {
             <div class="absolute bottom-full z-30 mb-2 grid w-full max-w-lg grid-cols-2 gap-1 rounded-xl border border-slate-200 bg-white p-2 shadow-xl sm:grid-cols-3"
@@ -230,11 +230,11 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
   private readonly toast = inject(ToastService);
   private readonly host = inject(ElementRef<HTMLElement>);
 
-  /** Parâmetro de rota. */
+  /** Route parameter. */
   readonly id = input.required<string>();
 
   protected readonly fieldTypes = FIELD_TYPES;
-  protected readonly responsePlural = { '=0': 'Nenhuma resposta', '=1': '1 resposta', other: '# respostas' };
+  protected readonly responsePlural = { '=0': 'No responses', '=1': '1 response', other: '# responses' };
 
   protected readonly loaded = signal(false);
   protected readonly loadError = signal<string | null>(null);
@@ -257,7 +257,7 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
   protected readonly fieldErrors = computed(() => errorsByFieldIndex(this.serverErrors()));
   protected readonly titleError = computed(() => this.serverErrors()['title'] ?? null);
 
-  /** Campos para a pré-visualização; itens ainda não salvos recebem ids temporários. */
+  /** Fields for the preview; unsaved items get temporary ids. */
   protected readonly previewFields = computed<RenderField[]>(() =>
     this.fields().map((f) => ({
       ...f,
@@ -291,7 +291,7 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
     this.dirty.set(true);
   }
 
-  // ---- edição de campos ----
+  // ---- field editing ----
 
   protected toggleAddMenu(event: Event): void {
     event.stopPropagation();
@@ -341,16 +341,16 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
     this.updateStructure(moveField(this.fields(), event.previousIndex, event.currentIndex), event.currentIndex);
   }
 
-  // ---- ações ----
+  // ---- actions ----
 
   protected save(): void {
     this.persist().subscribe({
-      next: () => this.toast.success('Alterações salvas.'),
-      error: () => undefined, // já exibido por persist()
+      next: () => this.toast.success('Changes saved.'),
+      error: () => undefined, // already shown by persist()
     });
   }
 
-  /** Salva as alterações pendentes e publica (ou reabre) o formulário. */
+  /** Saves pending changes and publishes (or reopens) the form. */
   protected publish(): void {
     this.persist()
       .pipe(
@@ -366,9 +366,9 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
       .subscribe({
         next: (form) => {
           this.status.set(form.status);
-          this.toast.success('Formulário publicado! Copie o link para compartilhar.');
+          this.toast.success('Form published! Copy the link to share it.');
         },
-        error: () => undefined, // já exibido por persist()
+        error: () => undefined, // already shown by persist()
       });
   }
 
@@ -380,7 +380,7 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
     this.api.close(id).subscribe({
       next: (form) => {
         this.status.set(form.status);
-        this.toast.success('O formulário não aceita mais respostas.');
+        this.toast.success('The form is no longer accepting responses.');
       },
       error: (err) => this.toast.error(toApiError(err).message),
     });
@@ -389,17 +389,17 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
   protected async copyLink(): Promise<void> {
     const url = publicFormUrl(this.slug());
     if (await copyToClipboard(url)) {
-      this.toast.success('Link copiado.');
+      this.toast.success('Link copied.');
     } else {
       this.toast.info(url);
     }
   }
 
   protected onPreviewSubmit(_answers: Record<string, AnswerValue>): void {
-    this.toast.info('Pré-visualização: as respostas não são enviadas.');
+    this.toast.info('Preview: responses are not submitted.');
   }
 
-  /** Salva se houver alterações e emite o id do formulário. */
+  /** Saves if there are changes and emits the form id. */
   private persist(): Observable<string> {
     const id = this.formId();
     if (!id) {
@@ -409,7 +409,7 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
       return of(id);
     }
     if (!this.title().trim()) {
-      const message = 'Informe o título do formulário.';
+      const message = 'Enter a form title.';
       this.serverErrors.set({ title: message });
       this.mode.set('edit');
       this.toast.error(message);
@@ -462,7 +462,7 @@ export class BuilderPage implements OnInit, HasUnsavedChanges {
     this.dirty.set(false);
   }
 
-  /** Mudanças estruturais (inserir, remover, mover) invalidam os índices dos erros do servidor. */
+  /** Structural changes (insert, remove, move) invalidate the server error indexes. */
   private updateStructure(fields: EditorField[], activeIndex: number): void {
     this.fields.set(fields);
     this.activeIndex.set(activeIndex);
