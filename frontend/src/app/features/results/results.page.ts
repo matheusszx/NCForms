@@ -40,7 +40,7 @@ const PAGE_SIZE = 20;
             <button type="button" class="btn-secondary" (click)="copyLink(f)">
               <app-icon name="link" [size]="16" /> Copy link
             </button>
-            <a class="btn-ghost" [href]="'/f/' + f.slug" target="_blank" rel="noopener">
+            <a class="btn-ghost" [href]="publicUrl(f.slug)" target="_blank" rel="noopener">
               <app-icon name="external" [size]="16" /> Open
             </a>
           }
@@ -171,6 +171,7 @@ export class ResultsPage implements OnInit {
   private readonly responsesApi = inject(ResponsesApi);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  protected readonly publicUrl = publicFormUrl;
   private readonly confirm = inject(ConfirmService);
 
   /** Route parameter and query param (?r=) bound via withComponentInputBinding. */

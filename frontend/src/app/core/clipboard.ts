@@ -28,5 +28,6 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 export function publicFormUrl(slug: string): string {
-  return `${window.location.origin}/f/${slug}`;
+  // Resolve against <base href> so the link also works when the app is served from a subpath (GitHub Pages).
+  return new URL(`f/${encodeURIComponent(slug)}`, document.baseURI).href;
 }

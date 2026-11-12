@@ -4,11 +4,13 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
+import { extraInterceptors } from './core/mock/backend.providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    // extraInterceptors is empty in the regular build; the GitHub Pages build adds the in-browser mock API.
+    provideHttpClient(withInterceptors([authInterceptor, ...extraInterceptors])),
   ],
 };
