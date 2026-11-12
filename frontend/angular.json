@@ -44,6 +44,27 @@
               ],
               "outputHashing": "all"
             },
+            "ghpages": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "700kB",
+                  "maximumError": "1.5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/core/mock/backend.providers.ts",
+                  "with": "src/app/core/mock/backend.providers.ghpages.ts"
+                }
+              ]
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -60,6 +81,9 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "ghpages": {
+              "buildTarget": "frontend:build:ghpages"
             }
           },
           "defaultConfiguration": "development",

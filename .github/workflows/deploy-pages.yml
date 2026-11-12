@@ -1,0 +1,63 @@
+name: Deploy demo to GitHub Pages
+
+# Static demo build: the API is emulated in the browser (localStorage),
+# so no backend or database is deployed. See "Demo on GitHub Pages" in the README.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Unit tests
+        run: npx ng test --watch=false
+
+      - name: Build (ghpages configuration)
+        run: npx ng build --configuration ghpages --base-href "/${{ github.event.repository.name }}/"
+
+      - name: SPA fallback and disable Jekyll
+        run: |
+          cp dist/frontend/browser/index.html dist/frontend/browser/404.html
+          touch dist/frontend/browser/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist/frontend/browser
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

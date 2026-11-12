@@ -57,6 +57,23 @@ browser and again on the server.
 
 ![Sign-in page](docs/screenshots/login.png)
 
+## Demo on GitHub Pages (no backend)
+
+There is also a static **demo build** that runs entirely in the browser, so you can host it on GitHub Pages without a server or a database. In this build, an Angular HTTP interceptor (`frontend/src/app/core/mock/`) answers every `/api/**` call itself. It follows the same rules as the Spring Boot API (validation, publish/close, archived fields, pagination) and stores everything in `localStorage`.
+
+Limitations, which a banner on every page also points out:
+
+- Data exists **only in the visitor's browser**. Accounts, forms and responses are not shared between devices or people.
+- A public link (`/f/<slug>`) only works in the browser where the form was created. This is enough to demonstrate the full flow (create → publish → answer → see results), but it doesn't work for collecting real responses. Use the VPS deploy below for that.
+
+How to publish it:
+
+1. Push to `main`. The [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) workflow runs the tests and builds with `--configuration ghpages --base-href /<repo>/`. It also copies `index.html` to `404.html` so deep links work, and then deploys.
+2. Once per repository, under **Settings → Pages → Build and deployment → Source**, choose **GitHub Actions**.
+3. The site is served at `https://<user>.github.io/<repo>/`.
+
+To build it locally, run `cd frontend && npm run build:ghpages -- --base-href /NCForms/`. You can also run `npx ng serve --configuration ghpages` to try the demo mode without the backend. The regular `ng build` and Docker images don't include the mock code.
+
 ## Deploying to a VPS (recommended)
 
 NCForms needs a server: the API (Spring Boot) and the database (Postgres) must run somewhere.
